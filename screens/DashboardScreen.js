@@ -1,12 +1,17 @@
 // screens/DashboardScreen.js
 import React from 'react';
-import { View, Text, Button, TouchableOpacity } from 'react-native';
-import { firebase } from '../firebaseconfig';
+import { View, Button } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { FontAwesome5, MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { firebase } from '../firebaseconfig';
+
+// Importando as telas separadas
+import DashboardHomeScreen from './DashboardHomeScreen';
+import WaterCounterScreen from './WaterCounterScreen';
+import ExerciseScreen from './ExerciseScreen';
+import FoodScreen from './FoodScreen';
 
 const Tab = createBottomTabNavigator();
-
 
 export default function DashboardScreen({ navigation }) {
   const handleLogout = () => {
@@ -14,25 +19,33 @@ export default function DashboardScreen({ navigation }) {
       .then(() => navigation.navigate('Home'));
   };
 
-
- 
-  function HomeScreen() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-      </View>
-    );
-  }
-
-
-  function TabNavigator() {
-    return (
-      <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: ({ color }) => <Icon name="home-outline" size={24} color={color} /> }} />
-        <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: ({ color }) => <Icon name="settings-outline" size={24} color={color} /> }} />
-        <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Icon name="person-outline" size={24} color={color} /> }} />
+  return (
+    <View style={{ flex: 1 }}>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            if (route.name === 'Dashboard') {
+              return <Ionicons name="stats-chart" size={size} color={color} />;
+            } else if (route.name === 'Contador de Água') {
+              return <FontAwesome5 name="tint" size={size} color={color} />;
+            } else if (route.name === 'Exercícios') {
+              return <MaterialIcons name="fitness-center" size={size} color={color} />;
+            } else if (route.name === 'Comida') {
+              return <MaterialIcons name="restaurant" size={size} color={color} />;
+            }
+          },
+          tabBarLabel: () => null,  // Remove os nomes das abas
+          tabBarActiveTintColor: '#007acc',
+          tabBarInactiveTintColor: 'gray',
+        })}
+      >
+        <Tab.Screen name="Dashboard" component={DashboardHomeScreen} />
+        <Tab.Screen name="Contador de Água" component={WaterCounterScreen} />
+        <Tab.Screen name="Exercícios" component={ExerciseScreen} />
+        <Tab.Screen name="Comida" component={FoodScreen} />
       </Tab.Navigator>
-    );
-  }
 
+     
+    </View>
+  );
 }
