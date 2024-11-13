@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "firevitality",
+    "entryPoint": "./App.js",
     "slug": "firevitality",
     "version": "1.0.0",
     "orientation": "portrait",
