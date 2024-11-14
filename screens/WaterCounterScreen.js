@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions } from 'react-native';
 import Svg, { Path, Rect, ClipPath, Defs } from 'react-native-svg';
+
+const { height: screenHeight } = Dimensions.get('window'); // Pega a altura da tela
 
 export default function WaterCounterScreen() {
   const goal = 4000; // Meta diária de água em ML
@@ -8,6 +10,7 @@ export default function WaterCounterScreen() {
 
   const [totalWater, setTotalWater] = useState(0);
   const [waterLevel] = useState(new Animated.Value(0)); // Animação para o nível de água
+  const dropHeight = screenHeight * 0.6; // Ajusta a altura da gota para 60% da altura da tela
 
   const addWater = () => {
     if (totalWater + waterPerCup <= goal) {
@@ -21,7 +24,7 @@ export default function WaterCounterScreen() {
     animateWaterLevel(0);
   };
 
-  const animateWaterLevel = (level: number) => {
+  const animateWaterLevel = (level) => {
     Animated.timing(waterLevel, {
       toValue: level * 100, // Converte a porcentagem em valor para a animação
       duration: 800,
@@ -33,8 +36,8 @@ export default function WaterCounterScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Hoje</Text>
 
-      <View style={styles.dropContainer}>
-        <Svg height="200" width="120" viewBox="0 0 24 24">
+      <View style={[styles.dropContainer, { height: dropHeight }]}>
+        <Svg height={dropHeight} width={dropHeight / 1.7} viewBox="0 0 24 24">
           {/* Definindo a forma da gota e criando um caminho de recorte para o preenchimento */}
           <Defs>
             <ClipPath id="dropClip">
@@ -63,7 +66,7 @@ export default function WaterCounterScreen() {
               overflow: 'hidden',
             }}
           >
-            <Svg height="200" width="120" viewBox="0 0 24 24" clipPath="url(#dropClip)">
+            <Svg height={dropHeight} width={dropHeight / 1.7} viewBox="0 0 24 24" clipPath="url(#dropClip)">
               <Rect x="0" y="0" width="24" height="24" fill="#1E90FF" />
             </Svg>
           </Animated.View>
@@ -103,10 +106,9 @@ const styles = StyleSheet.create({
   dropContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 120,
-    height: 200,
+    width: '100%',
     position: 'relative',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   waterText: {
     fontSize: 18,
