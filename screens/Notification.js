@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function ProfileScreen() {
+export default function NotificationScreen() {
   return (
     <View style={styles.container}>
-      <Text>Informações do Usuário</Text>
-      {/* Exiba informações do perfil aqui */}
+      <Text>Histórico de Notificações</Text>
+      {/* Exiba a lista de notificações aqui */}
     </View>
   );
 }

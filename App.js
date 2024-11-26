@@ -4,7 +4,11 @@ import AppRoutes from './routes';
 
 export default function App() {
   return (
+    <> 
+    <StatusBar hidden={true} />
    <AppRoutes/>
+    </>
+       
   );
 }
 

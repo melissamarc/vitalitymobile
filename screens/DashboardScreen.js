@@ -23,6 +23,8 @@ export default function DashboardScreen({ navigation }) {
     <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
+           headerShown: false,
+           
           tabBarIcon: ({ color, size }) => {
             if (route.name === 'Dashboard') {
               return <Ionicons name="stats-chart" size={size} color={color} />;
@@ -35,8 +37,17 @@ export default function DashboardScreen({ navigation }) {
             }
           },
           tabBarLabel: () => null,  // Remove os nomes das abas
-          tabBarActiveTintColor: '#007acc',
+          
           tabBarInactiveTintColor: 'gray',
+           tabBarActiveTintColor: '#FF6347', // Cor do ícone/label ativo
+    tabBarInactiveTintColor: '#808080', // Cor do ícone/label inativo
+    tabBarStyle: {
+      backgroundColor: '#FFF',
+      paddingBottom: 8, // Ajusta o espaço interno na barra
+    },
+    tabBarIconStyle: {
+      size: 36, // Tamanho dos ícones
+    },
         })}
       >
         <Tab.Screen name="Dashboard" component={DashboardHomeScreen} />
