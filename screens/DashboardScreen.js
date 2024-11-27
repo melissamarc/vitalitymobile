@@ -10,6 +10,7 @@ import DashboardHomeScreen from './DashboardHomeScreen';
 import WaterCounterScreen from './WaterCounterScreen';
 import ExerciseScreen from './ExerciseScreen';
 import FoodScreen from './FoodScreen';
+import StepCounterScreen from './StepCounterScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,19 +35,24 @@ export default function DashboardScreen({ navigation }) {
               return <MaterialIcons name="fitness-center" size={size} color={color} />;
             } else if (route.name === 'Comida') {
               return <MaterialIcons name="restaurant" size={size} color={color} />;
+            } else if (route.name === 'Passos') {
+              return <MaterialIcons name="step" size={size} color={color} />;
             }
           },
           tabBarLabel: () => null,  // Remove os nomes das abas
           
           tabBarInactiveTintColor: 'gray',
-           tabBarActiveTintColor: '#FF6347', // Cor do ícone/label ativo
-    tabBarInactiveTintColor: '#808080', // Cor do ícone/label inativo
+           tabBarActiveTintColor: '#0004', // Cor do ícone/label ativo
+    tabBarInactiveTintColor: '#8894', // Cor do ícone/label inativo
     tabBarStyle: {
       backgroundColor: '#FFF',
-      paddingBottom: 8, // Ajusta o espaço interno na barra
+      paddingTop: 10,   
+
+      alignItems: 'center',
+      justifyContent: 'center' // Ajusta o espaço interno na barra
     },
     tabBarIconStyle: {
-      size: 36, // Tamanho dos ícones
+      size: 40, // Tamanho dos ícones
     },
         })}
       >
@@ -54,6 +60,7 @@ export default function DashboardScreen({ navigation }) {
         <Tab.Screen name="Contador de Água" component={WaterCounterScreen} />
         <Tab.Screen name="Exercícios" component={ExerciseScreen} />
         <Tab.Screen name="Comida" component={FoodScreen} />
+         <Tab.Screen name="Passos" component={StepCounterScreen} />
       </Tab.Navigator>
 
      
