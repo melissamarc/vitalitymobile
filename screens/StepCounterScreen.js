@@ -1,70 +1,108 @@
 import React, { useState, useEffect } from "react";
 import {
-     View,
-      Text,
-       StyleSheet, 
-       Dimensions,
-    TouchableOpacity} from "react-native";
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Pedometer } from "expo-sensors";
-import { Ionicons } from '@expo/vector-icons'; // Biblioteca para os ícones
+import { Ionicons } from "@expo/vector-icons";
 import { ProgressCircle, LineChart } from "react-native-svg-charts";
 import UserButton from "./components/UserButton";
+import { firebase } from "../firebaseconfig";
 
-const StepCounterScreen = () => {
+const StepCounterScreen = ({ navigation }: any) => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState(null);
   const [steps, setSteps] = useState(0);
   const [caloriesBurned, setCaloriesBurned] = useState(0);
+  const [stepGoal, setStepGoal] = useState(3000); // Meta padrão
+  const [calorieGoal, setCalorieGoal] = useState(200); // Meta padrão
+  const [loading, setLoading] = useState(true);
 
-  // Metas diárias
-  const STEP_GOAL = 3000;
-  const CALORIE_GOAL = 200;
-
+  // Carregar metas do Firestore
   useEffect(() => {
-    // Verifica se o pedômetro está disponível no dispositivo
+    const fetchUserGoals = async () => {
+      const userId = firebase.auth().currentUser?.uid;
+
+      if (!userId) {
+        console.error("Usuário não autenticado");
+        return;
+      }
+
+      try {
+        const userDoc = await firebase
+          .firestore()
+          .collection("users")
+          .doc(userId)
+          .get();
+
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          setStepGoal(userData.stepGoal || 3000);
+          setCalorieGoal(userData.calorieGoal || 200);
+        } else {
+          console.log("Documento do usuário não encontrado.");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar metas do Firestore:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserGoals();
+  }, []);
+
+  // Configurar pedômetro
+  useEffect(() => {
     Pedometer.isAvailableAsync().then(
       (result) => setIsPedometerAvailable(result),
       (error) => console.error("Erro ao verificar o pedômetro:", error)
     );
 
-    // Monitora os passos
     const subscription = Pedometer.watchStepCount((result) => {
       const newSteps = result.steps;
       setSteps(newSteps);
-      // Calcula calorias queimadas (estimativa: 0,04 kcal por passo)
-      setCaloriesBurned(newSteps * 0.04);
+      setCaloriesBurned(newSteps * 0.04); // Estimativa: 0,04 kcal por passo
     });
 
-    // Limpa a assinatura ao desmontar o componente
     return () => subscription && subscription.remove();
   }, []);
 
   // Cálculo de porcentagens para os gráficos
-  const stepProgress = Math.min((steps / STEP_GOAL) * 100, 100);
-  const calorieProgress = Math.min((caloriesBurned / CALORIE_GOAL) * 100, 100);
+  const stepProgress = Math.min((steps / stepGoal) * 100, 100);
+  const calorieProgress = Math.min((caloriesBurned / calorieGoal) * 100, 100);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-           <View style={styles.header}> 
-        <UserButton/>
-
-
-        <View style={styles.icons}> 
-            <TouchableOpacity
-          onPress={() => navigation.navigate('Notification')}
-          style={styles.iconButton}
-        >
-          <Ionicons name="notifications-outline" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ProfileScreen")}
-          style={styles.iconButton}
-        >
-          <Ionicons name="person-outline" size={24} color="black" />
-        </TouchableOpacity>
+      {/* Cabeçalho */}
+      <View style={styles.header}>
+        <UserButton />
+        <View style={styles.icons}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Notification")}
+            style={styles.iconButton}
+          >
+            <Ionicons name="notifications-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ProfileScreen")}
+            style={styles.iconButton}
+          >
+            <Ionicons name="person-outline" size={24} color="black" />
+          </TouchableOpacity>
         </View>
-      
       </View>
-
 
       {/* Gráfico Circular de Progresso */}
       <View style={styles.card}>
@@ -78,9 +116,9 @@ const StepCounterScreen = () => {
         >
           <Text style={styles.progressText}>{`${stepProgress.toFixed(0)}%`}</Text>
         </ProgressCircle>
-        <Text style={styles.subTitle}>Passos: {steps}/{STEP_GOAL}</Text>
+        <Text style={styles.subTitle}>Passos: {steps}/{stepGoal}</Text>
         <Text style={styles.subTitle}>
-          Calorias: {caloriesBurned.toFixed(1)} kcal / {CALORIE_GOAL} kcal
+          Calorias: {caloriesBurned.toFixed(1)} kcal / {calorieGoal} kcal
         </Text>
       </View>
 
@@ -89,12 +127,12 @@ const StepCounterScreen = () => {
         <View style={styles.infoCard}>
           <Text style={styles.cardTitle}>Calorias diárias</Text>
           <Text style={styles.cardValue}>{caloriesBurned.toFixed(1)} kcal</Text>
-          <Text style={styles.cardMeta}>Meta: {CALORIE_GOAL} kcal</Text>
+          <Text style={styles.cardMeta}>Meta: {calorieGoal} kcal</Text>
         </View>
         <View style={styles.infoCard}>
-          <Text style={styles.cardTitle}> Passos</Text>
+          <Text style={styles.cardTitle}>Passos</Text>
           <Text style={styles.cardValue}>{steps}</Text>
-          <Text style={styles.cardMeta}> Meta: {STEP_GOAL}</Text>
+          <Text style={styles.cardMeta}>Meta: {stepGoal}</Text>
         </View>
       </View>
 
@@ -102,11 +140,11 @@ const StepCounterScreen = () => {
       <View style={styles.graphContainer}>
         <LineChart
           style={{ height: 150, width: Dimensions.get("window").width - 40 }}
-          data={[steps, caloriesBurned, CALORIE_GOAL]} // Simula dados do progresso
+          data={[steps, caloriesBurned, calorieGoal]} // Simula dados do progresso
           svg={{ stroke: "#4CAF50", strokeWidth: 2 }}
           contentInset={{ top: 10, bottom: 10 }}
         />
-        <Text style={styles.graphTitle}> Progresso diário </Text>
+        <Text style={styles.graphTitle}>Progresso diário</Text>
       </View>
     </View>
   );
@@ -115,30 +153,27 @@ const StepCounterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
   },
-    header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 5,
     paddingTop: 30,
-
-
   },
   icons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
     paddingHorizontal: 20,
     paddingTop: 10,
- 
   },
-
   iconButton: {
     padding: 10,
   },
-  
   card: {
     backgroundColor: "#fff",
     padding: 20,
