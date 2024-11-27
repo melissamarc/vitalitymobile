@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import UserButton from './components/UserButton';
+import { Ionicons } from '@expo/vector-icons'; // Biblioteca para os ícones
 
 export default function Exercicio() {
   const [steps, setSteps] = useState('');
@@ -116,7 +118,27 @@ export default function Exercicio() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <View style={styles.header}>
+         <View style={styles.header}> 
+        <UserButton/>
+
+
+        <View style={styles.icons}> 
+            <TouchableOpacity
+          onPress={() => navigation.navigate('Notification')}
+          style={styles.iconButton}
+        >
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ProfileScreen")}
+          style={styles.iconButton}
+        >
+          <Ionicons name="person-outline" size={24} color="black" />
+        </TouchableOpacity>
+        </View>
+        </View>
+
+        <View style={styles.header1}>
           <Text style={styles.welcomeText}>Exercício</Text>
           <Text style={styles.dateText}>{`${currentDay}, ${currentTime}`}</Text>
         </View>
@@ -155,14 +177,37 @@ export default function Exercicio() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+   
     backgroundColor: '#f5f5f5',
   },
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 20,
   },
-  header: {
+   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    paddingTop: 30,
+
+
+  },
+  icons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+ 
+  },
+
+  iconButton: {
+    padding: 10,
+  },
+
+
+  header1: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

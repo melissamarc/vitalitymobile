@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import Svg, { Path, Rect, ClipPath, Defs } from 'react-native-svg';
+import UserButton from "./components/UserButton";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from '@react-navigation/native';
 
 export default function WaterCounterScreen() {
   const goal = 4000; // Meta diária de água em ML
@@ -21,6 +24,8 @@ export default function WaterCounterScreen() {
     animateWaterLevel(0);
   };
 
+  const navigation = useNavigation();
+
   const animateWaterLevel = (level: number) => {
     Animated.timing(waterLevel, {
       toValue: level * 100, // Converte a porcentagem em valor para a animação
@@ -31,6 +36,24 @@ export default function WaterCounterScreen() {
 
   return (
     <View style={styles.container}>
+       <View style={styles.header}>
+        <UserButton />
+        <View style={styles.icons}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Notification")}
+            style={styles.iconButton}
+          >
+            <Ionicons name="notifications-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ProfileScreen")}
+            style={styles.iconButton}
+          >
+            <Ionicons name="person-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <Text style={styles.title}>Hoje</Text>
 
       <View style={styles.dropContainer}>
@@ -90,9 +113,23 @@ export default function WaterCounterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    paddingTop: 50,
+ 
+  
+  },
+   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 5,
+    paddingTop: 30,
+  },
+  icons: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  iconButton: {
+    padding: 10,
   },
   title: {
     fontSize: 24,
