@@ -9,6 +9,10 @@ import DashboardScreen from './screens/DashboardScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import NotificationScreen from './screens/Notification';
+import Caminhada from './screens/Caminhada';
+import Corrida from './screens/Corrida';
+import Musculacao from './screens/Musculacao';
+
 
 const Stack = createStackNavigator();
 
@@ -28,8 +32,12 @@ export default function AppRoutes() {
         <Stack.Screen name="Dashboard" component={DashboardScreen}
         
          />
+          <Stack.Screen name="Caminhada" component={Caminhada} />
+            <Stack.Screen name="Corrida" component={Corrida} />
+              <Stack.Screen name="Musculacao" component={Musculacao} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
           <Stack.Screen name="Notification" component={NotificationScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

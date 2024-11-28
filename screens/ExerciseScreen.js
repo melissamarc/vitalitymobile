@@ -1,174 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Image,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import UserButton from './components/UserButton';
 import { Ionicons } from '@expo/vector-icons'; // Biblioteca para os ícones
+import UserButton from './components/UserButton';
 
 export default function Exercicio() {
-  const [steps, setSteps] = useState('');
-  const [time, setTime] = useState('');
-  const [heartRate, setHeartRate] = useState('');
-  const [distance, setDistance] = useState('');
-  const [calories, setCalories] = useState('');
-  const [pace, setPace] = useState('');
-  const [currentTime, setCurrentTime] = useState('');
-  const [currentDay, setCurrentDay] = useState('');
-
   const navigation = useNavigation();
-
-  // Função para formatar o horário
-  const formatTime = (date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-    return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
-
-  // Função para obter o dia da semana
-  const getDayOfWeek = (date) => {
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    return daysOfWeek[date.getDay()];
-  };
-
-  // Atualiza o tempo e o dia a cada segundo
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const currentDate = new Date();
-      setCurrentTime(formatTime(currentDate));
-      setCurrentDay(getDayOfWeek(currentDate));
-    }, 1000);
-
-    return () => clearInterval(intervalId); // Limpar o intervalo quando o componente for desmontado
-  }, []);
-
-  const handleSave = (activity) => {
-    if (!steps || !time || !heartRate || !distance || !calories || !pace) {
-      Alert.alert('Erro', `Por favor, preencha todas as informações de ${activity}.`);
-      return;
-    }
-
-    console.log({
-      activity,
-      steps,
-      time,
-      heartRate,
-      distance,
-      calories,
-      pace,
-    });
-
-    Alert.alert('Sucesso', `Informações de ${activity} salvas com sucesso!`);
-    setSteps('');
-    setTime('');
-    setHeartRate('');
-    setDistance('');
-    setCalories('');
-    setPace('');
-  };
-
-  const renderActivityContainer = (activityName) => (
-    <View style={styles.containerSection}>
-      <Text style={styles.sectionTitle}>{activityName}</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Passos"
-        keyboardType="numeric"
-        value={steps}
-        onChangeText={setSteps}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Tempo (minutos)"
-        keyboardType="numeric"
-        value={time}
-        onChangeText={setTime}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Batimentos Cardíacos (BPM)"
-        keyboardType="numeric"
-        value={heartRate}
-        onChangeText={setHeartRate}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Distância (km)"
-        keyboardType="numeric"
-        value={distance}
-        onChangeText={setDistance}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Calorias (kcal)"
-        keyboardType="numeric"
-        value={calories}
-        onChangeText={setCalories}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Ritmo (min/km)"
-        keyboardType="numeric"
-        value={pace}
-        onChangeText={setPace}
-      />
-      <Button title={`Salvar ${activityName}`} onPress={() => handleSave(activityName)} />
-    </View>
-  );
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-         <View style={styles.header}> 
-        <UserButton/>
-
-
-        <View style={styles.icons}> 
+        {/* Header com ícones */}
+        <View style={styles.header}>
+         <UserButton/>
+          <View style={styles.icons}>
             <TouchableOpacity
-          onPress={() => navigation.navigate('Notification')}
-          style={styles.iconButton}
-        >
-          <Ionicons name="notifications-outline" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ProfileScreen")}
-          style={styles.iconButton}
-        >
-          <Ionicons name="person-outline" size={24} color="black" />
-        </TouchableOpacity>
-        </View>
-        </View>
-
-        <View style={styles.header1}>
-          <Text style={styles.welcomeText}>Exercício</Text>
-          <Text style={styles.dateText}>{`${currentDay}, ${currentTime}`}</Text>
+              onPress={() => navigation.navigate('Notification')}
+              style={styles.iconButton}
+            >
+              <Ionicons name="notifications-outline" size={24} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ProfileScreen')}
+              style={styles.iconButton}
+            >
+              <Ionicons name="person-outline" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.activityOverview}>
-          <Text style={styles.activityType}>Musculação</Text>
-          <Text style={styles.activityDistance}>15.00 km</Text>
-          <Text style={styles.activityTime}>8:30 AM</Text>
-          <TouchableOpacity style={styles.checkoutButton}>
-            <Text style={styles.checkoutText}>Checkout</Text>
+  
+      
+
+      
+
+        {/* Cartões de Exercícios */}
+        {['Caminhada', 'Corrida', 'Musculacao'].map((exercicio, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.exerciseCard}
+            onPress={() => navigation.navigate(exercicio)}
+          >
+            <View style={styles.cardContent}>
+              <Ionicons name="walk-outline" size={40} color="#6C63FF" />
+              <Text style={styles.exerciseTitle}>{exercicio}</Text>
+            </View>
+            <Ionicons name="chevron-forward-outline" size={24} color="#aaa" />
           </TouchableOpacity>
-        </View>
-
-        <View style={styles.activityOverview}>
-          <Text style={styles.activityType}>Caminhada</Text>
-          <Text style={styles.activityDistance}>15.00 km</Text>
-          <Text style={styles.activityTime}>8:30 AM</Text>
-          <TouchableOpacity style={styles.checkoutButton}>
-            <Text style={styles.checkoutText}>Checkout</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.activityOverview}>
-          <Text style={styles.activityType}>Corrida</Text>
-          <Text style={styles.activityDistance}>15.00 km</Text>
-          <Text style={styles.activityTime}>8:30 AM</Text>
-          <TouchableOpacity style={styles.checkoutButton}>
-            <Text style={styles.checkoutText}>Checkout</Text>
-          </TouchableOpacity>
-        </View>
+        ))}
       </View>
     </ScrollView>
   );
@@ -177,88 +63,80 @@ export default function Exercicio() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
-    backgroundColor: '#f5f5f5',
+ 
   },
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 20,
   },
-   header: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 5,
     paddingTop: 30,
 
-
   },
+
   icons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
- 
   },
-
   iconButton: {
+    marginLeft: 15,
     padding: 10,
   },
-
-
-  header1: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f1f1f1',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 20,
+  },
+  searchText: {
+    marginLeft: 10,
+    color: '#aaa',
+    fontSize: 16,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#333',
+  },
+  suggestions: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  suggestionCard: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    borderRadius: 10,
+    marginRight: 15,
+    alignItems: 'center',
+  },
+  suggestionText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: '#555',
+  },
+  exerciseCard: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
   },
-  welcomeText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4a4a4a',
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  dateText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  activityOverview: {
-    backgroundColor: '#e6e6e6',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-  },
-  activityType: {
+  exerciseTitle: {
+    marginLeft: 15,
     fontSize: 18,
-    color: '#555',
-  },
-  activityDistance: {
-    fontSize: 30,
     fontWeight: 'bold',
     color: '#333',
-  },
-  activityTime: {
-    fontSize: 14,
-    color: '#777',
-    marginBottom: 10,
-  },
-  checkoutButton: {
-    backgroundColor: '#0EAB6E',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignSelf: 'flex-start',
-  },
-  checkoutText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginVertical: 5,
   },
 });
