@@ -22,7 +22,6 @@ export default function Caminhada() {
   const [ativo, setAtivo] = useState(false);
   const [mapaExpandido, setMapaExpandido] = useState(false);
 
-  // Solicitar permissões para acessar a localização
   useEffect(() => {
     const requestLocationPermission = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -39,7 +38,6 @@ export default function Caminhada() {
     requestLocationPermission();
   }, []);
 
-  // Verificar se o pedômetro está disponível
   useEffect(() => {
     Pedometer.isAvailableAsync().then(
       (result) => setIsPedometerAvailable(result),
@@ -47,26 +45,23 @@ export default function Caminhada() {
     );
   }, []);
 
-  // Iniciar o pedômetro quando o exercício começar
   useEffect(() => {
     let subscription;
 
     if (ativo) {
       subscription = Pedometer.watchStepCount((result) => {
-        setSteps(result.steps);
-        setDistancia(result.steps * 0.0008); // Aproximadamente 0.8 metros por passo
-        setCalorias(result.steps * 0.04); // Estimativa de calorias (0.04 kcal por passo)
+        const newSteps = result.steps;
+        setSteps(newSteps);
+        setDistancia(newSteps * 0.0008); // Aproximadamente 0.8 metros por passo
+        setCalorias(newSteps * 0.04); // Estimativa de calorias (0.04 kcal por passo)
       });
-    } else if (subscription) {
-      subscription.remove();
     }
 
     return () => subscription?.remove();
   }, [ativo]);
 
-  // Rastreamento de localização
   useEffect(() => {
-    let intervalo: NodeJS.Timeout;
+    let intervalo;
 
     if (ativo) {
       intervalo = setInterval(async () => {
@@ -84,7 +79,7 @@ export default function Caminhada() {
     }
 
     return () => clearInterval(intervalo);
-  }, [ativo, route]);
+  }, [ativo]);
 
   const finalizarExercicio = () => {
     setAtivo(false);
@@ -107,16 +102,22 @@ export default function Caminhada() {
       <TouchableOpacity onPress={() => setMapaExpandido(true)}>
         <MapView
           style={styles.map}
-          initialRegion={{
-            latitude: location?.latitude || 37.78825,
-            longitude: location?.longitude || -122.4324,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
+          region={
+            location
+              ? {
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                }
+              : null
+          }
           showsUserLocation
           followsUserLocation
         >
-          {route.length > 0 && <Polyline coordinates={route} strokeWidth={4} strokeColor="#0EAB6E" />}
+          {route.length > 0 && (
+            <Polyline coordinates={route} strokeWidth={4} strokeColor="#0EAB6E" />
+          )}
         </MapView>
       </TouchableOpacity>
 
@@ -157,20 +158,25 @@ export default function Caminhada() {
         )}
       </View>
 
-      {/* Modal para o mapa expandido */}
       <Modal visible={mapaExpandido} animationType="slide">
         <MapView
           style={{ flex: 1 }}
-          initialRegion={{
-            latitude: location?.latitude || 37.78825,
-            longitude: location?.longitude || -122.4324,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
+          region={
+            location
+              ? {
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                }
+              : null
+          }
           showsUserLocation
           followsUserLocation
         >
-          {route.length > 0 && <Polyline coordinates={route} strokeWidth={4} strokeColor="#0EAB6E" />}
+          {route.length > 0 && (
+            <Polyline coordinates={route} strokeWidth={4} strokeColor="#0EAB6E" />
+          )}
         </MapView>
         <TouchableOpacity
           style={styles.closeButton}
@@ -197,3 +203,4 @@ const styles = StyleSheet.create({
   closeButton: { position: 'absolute', bottom: 30, alignSelf: 'center', backgroundColor: '#0EAB6E', padding: 10, borderRadius: 10 },
   closeButtonText: { color: '#fff', fontSize: 16 },
 });
+

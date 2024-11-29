@@ -15,10 +15,10 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topSection}>
-        <Text style={styles.headerText}>Let's get started!</Text>
-        <Image source={{ uri: 'https://path_to_your_image' }} style={styles.image} />
-      </View>
+      <Image
+        source={require('../assets/logo.png')} // Caminho da imagem do logo
+        style={styles.imagemlogin}
+      />
 
       <View style={styles.loginBox}>
         <TextInput
@@ -67,23 +67,14 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6B38FB', // Purple background color
+    backgroundColor: '#ffff0',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  topSection: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 10,
-  },
-  image: {
-    width: 150,
-    height: 150,
+ 
+  imagemlogin: {
+    width: 200,
+    height: 200,
     borderRadius: 75,
   },
   loginBox: {
@@ -102,7 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   loginButton: {
-    backgroundColor: '#FFB800', // Yellow button color
+    backgroundColor: '#7DCD9A', 
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -133,7 +124,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   signUpText: {
-    color: '#6B38FB',
+    color: '#7DCD9A',
     fontWeight: 'bold',
   },
 });
