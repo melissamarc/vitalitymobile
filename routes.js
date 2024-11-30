@@ -12,7 +12,7 @@ import NotificationScreen from './screens/Notification';
 import Caminhada from './screens/Caminhada';
 import Corrida from './screens/Corrida';
 import Musculacao from './screens/Musculacao';
-
+import Detalhes from './screens/RecipeDetails';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +37,7 @@ export default function AppRoutes() {
               <Stack.Screen name="Musculacao" component={Musculacao} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
           <Stack.Screen name="Notification" component={NotificationScreen} />
+          <Stack.Screen name="Detalhes" component={Detalhes} />
 
       </Stack.Navigator>
     </NavigationContainer>

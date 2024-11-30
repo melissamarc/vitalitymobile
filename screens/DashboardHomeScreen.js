@@ -32,8 +32,10 @@ export default function DashboardHomeScreen() {
 
       {/* Conteúdo principal */}
       <View syle={styles.content}>
+
+       <Text style={styles.today}> Hoje </Text> 
        <View style={styles.cabecalho}> 
-        <Text> a </Text>
+        <Text> aqui vai ficar a qt de calorias  </Text> 
          </View>
         
     
@@ -45,7 +47,15 @@ export default function DashboardHomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 10
   },
+ today: {
+   paddingLeft: 13,
+   marginTop: 13,
+   fontSize: 18
+
+ },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -80,8 +90,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#7DCD9A',
-    width: '90%',
+    backgroundColor: '#ddd',
+    width: '95%',
     height: '40%',
     borderRadius: 20
   }

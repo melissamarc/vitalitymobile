@@ -11,6 +11,7 @@ import WaterCounterScreen from './WaterCounterScreen';
 import ExerciseScreen from './ExerciseScreen';
 import FoodScreen from './FoodScreen';
 import StepCounterScreen from './StepCounterScreen';
+import RecipeScreen from './RecipeScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -37,6 +38,8 @@ export default function DashboardScreen({ navigation }) {
               return <MaterialIcons name="restaurant" size={size} color={color} />;
             } else if (route.name === 'Passos') {
               return <MaterialIcons name="step" size={size} color={color} />;
+            }  else if (route.name === 'Receitas') {
+              return <MaterialIcons name="restaurant" size={size} color={color} />;
             }
           },
           tabBarLabel: () => null,  // Remove os nomes das abas
@@ -61,6 +64,8 @@ export default function DashboardScreen({ navigation }) {
         <Tab.Screen name="Exercícios" component={ExerciseScreen} />
         <Tab.Screen name="Comida" component={FoodScreen} />
          <Tab.Screen name="Passos" component={StepCounterScreen} />
+                  <Tab.Screen name="Receitas" component={RecipeScreen} />
+
       </Tab.Navigator>
 
      

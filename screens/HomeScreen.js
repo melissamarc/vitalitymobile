@@ -23,16 +23,16 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
           <Button
-            title="Login"
+            title="Entrar"
             onPress={() => navigation.navigate('Login')}
             color="#fff"
           />
         </View>
-        <View style={styles.buttonWrapper}>
+        <View style={styles.buttonWrapper2}>
           <Button
-            title="Cadastro"
+            title="Criar Conta"
             onPress={() => navigation.navigate('Signup')}
-            color="#fff"
+            color="#7DCD9A"
           />
         </View>
       </View>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', // Centraliza os botões verticalmente
     width: '90%', // Limita a largura dos botões a 80% da tela
     alignItems: 'center', // Centraliza os botões horizontalmente
-    marginTop: 100, // Ajusta a posição dos botões
+    marginTop: 180, // Ajusta a posição dos botões
   },
   buttonWrapper: {
     width: '100%', // A largura dos botões ocupa toda a largura disponível dentro do container
@@ -80,4 +80,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#7DCD9A',
     overflow: 'hidden',
   },
+    buttonWrapper2: {
+    width: '100%', // A largura dos botões ocupa toda a largura disponível dentro do container
+    marginVertical: 10, // Espaço entre os botões
+    borderRadius: 25,
+    backgroundColor: '#DDF',
+    overflow: 'hidden',
+   
+  },
+  
+
 });

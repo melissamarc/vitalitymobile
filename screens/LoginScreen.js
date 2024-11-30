@@ -22,41 +22,36 @@ export default function LoginScreen({ navigation }) {
 
       <View style={styles.loginBox}>
         <TextInput
-          placeholder="Email Address"
+          placeholder="Email"
           value={email}
           onChangeText={setEmail}
           style={styles.input}
           keyboardType="email-address"
         />
         <TextInput
-          placeholder="Password"
+          placeholder="Senha"
           value={password}
           onChangeText={setPassword}
           style={styles.input}
           secureTextEntry
         />
         <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Log In</Text>
+          <Text style={styles.loginButtonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <Text style={styles.orText}>Or</Text>
+        <Text style={styles.orText}>ou</Text>
 
         <View style={styles.socialButtons}>
           <TouchableOpacity style={styles.socialButton}>
             <FontAwesome name="google" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
-            <FontAwesome name="apple" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
-            <FontAwesome name="facebook" size={24} color="black" />
-          </TouchableOpacity>
+         
         </View>
 
         <View style={styles.signUpSection}>
-          <Text>Don’t have an account? </Text>
+          <Text>Não tem uma conta? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-            <Text style={styles.signUpText}>Sign up</Text>
+            <Text style={styles.signUpText}>Cadastre-se</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -91,6 +86,7 @@ const styles = StyleSheet.create({
     borderColor: '#DDD',
     borderRadius: 10,
     marginBottom: 15,
+    color: '#000'
   },
   loginButton: {
     backgroundColor: '#7DCD9A', 
@@ -110,7 +106,7 @@ const styles = StyleSheet.create({
   },
   socialButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '60%',
   },
   socialButton: {
