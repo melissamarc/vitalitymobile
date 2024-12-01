@@ -1,64 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
-import Svg, { Path, Rect, ClipPath, Defs } from 'react-native-svg';
-import UserButton from "./components/UserButton";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from '@react-navigation/native';
+{/*} joao, essa tela e a tela de refeições nao vao ficar na tab bar, vao ficar dentro do maiszinho que eu adicionei na barra embaixo. cuidado para nao se confundir*/}
+
+
+
+
+
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
+import Svg, { Path, Rect, Defs, ClipPath } from "react-native-svg";
 
 export default function WaterCounterScreen() {
   const goal = 4000; // Meta diária de água em ML
-  const waterPerCup = 500; // Quantidade de água por copo em ML
+  const step = 200; // Quantidade de água adicionada/removida por vez
 
   const [totalWater, setTotalWater] = useState(0);
-  const [waterLevel] = useState(new Animated.Value(0)); // Animação para o nível de água
+  const [waterLevel] = useState(new Animated.Value(0)); // Nível da água animado
 
-  const addWater = () => {
-    if (totalWater + waterPerCup <= goal) {
-      setTotalWater(totalWater + waterPerCup);
-      animateWaterLevel((totalWater + waterPerCup) / goal);
-    }
-  };
-
-  const resetWater = () => {
-    setTotalWater(0);
-    animateWaterLevel(0);
-  };
-
-  const navigation = useNavigation();
-
-  const animateWaterLevel = (level: number) => {
+  const updateWaterLevel = (newTotal: number) => {
     Animated.timing(waterLevel, {
-      toValue: level * 100, // Converte a porcentagem em valor para a animação
+      toValue: (newTotal / goal) * 100, // Converte o total para porcentagem
       duration: 800,
       useNativeDriver: false,
     }).start();
   };
 
+  const addWater = () => {
+    if (totalWater + step <= goal) {
+      const newTotal = totalWater + step;
+      setTotalWater(newTotal);
+      updateWaterLevel(newTotal);
+    }
+  };
+
+  const removeWater = () => {
+    if (totalWater - step >= 0) {
+      const newTotal = totalWater - step;
+      setTotalWater(newTotal);
+      updateWaterLevel(newTotal);
+    }
+  };
+
   return (
     <View style={styles.container}>
-       <View style={styles.header}>
-        <UserButton />
-        <View style={styles.icons}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Notification")}
-            style={styles.iconButton}
-          >
-            <Ionicons name="notifications-outline" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ProfileScreen")}
-            style={styles.iconButton}
-          >
-            <Ionicons name="person-outline" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
       <Text style={styles.title}>Hoje</Text>
 
       <View style={styles.dropContainer}>
         <Svg height="200" width="120" viewBox="0 0 24 24">
-          {/* Definindo a forma da gota e criando um caminho de recorte para o preenchimento */}
+          {/* Forma da gota */}
           <Defs>
             <ClipPath id="dropClip">
               <Path
@@ -73,17 +60,17 @@ export default function WaterCounterScreen() {
             fill="#E0F7FF"
           />
 
-          {/* Nível de água preenchendo a gota, ajustado pela animação */}
+          {/* Nível de água */}
           <Animated.View
             style={{
-              position: 'absolute',
+              position: "absolute",
               bottom: 0,
-              width: '100%',
+              width: "100%",
               height: waterLevel.interpolate({
                 inputRange: [0, 100],
-                outputRange: ['0%', '100%'],
+                outputRange: ["0%", "100%"], // Controla o preenchimento vertical
               }),
-              overflow: 'hidden',
+              overflow: "hidden",
             }}
           >
             <Svg height="200" width="120" viewBox="0 0 24 24" clipPath="url(#dropClip)">
@@ -92,18 +79,19 @@ export default function WaterCounterScreen() {
           </Animated.View>
         </Svg>
 
-        <Text style={styles.waterText}>{`${totalWater}ml\n${Math.round((totalWater / goal) * 100)}%`}</Text>
+        <Text style={styles.waterText}>
+          {`${totalWater}ml\n${Math.round((totalWater / goal) * 100)}%`}
+        </Text>
       </View>
 
       <Text style={styles.goalText}>{`Meta: ${goal}ml`}</Text>
-      <Text style={styles.statusText}>{`${totalWater / waterPerCup}/${goal / waterPerCup} Copos`}</Text>
 
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.button} onPress={addWater}>
-          <Text style={styles.buttonText}>Adicionar 500ml</Text>
+          <Text style={styles.buttonText}>+ 200ml</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.resetButton} onPress={resetWater}>
-          <Text style={styles.resetButtonText}>Resetar</Text>
+        <TouchableOpacity style={styles.button} onPress={removeWater}>
+          <Text style={styles.buttonText}>- 200ml</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -113,77 +101,46 @@ export default function WaterCounterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10 
-  
-  },
-   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 5,
-    paddingTop: 30,
-  },
-  icons: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  iconButton: {
-    padding: 10,
+    justifyContent: "center",
+    backgroundColor: "#F5F5F5",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   dropContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: 120,
     height: 200,
-    position: 'relative',
     marginBottom: 20,
   },
   waterText: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    position: 'absolute',
-    top: '45%',
-    fontWeight: 'bold',
+    position: "absolute",
+    top: "45%",
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textAlign: "center",
   },
   goalText: {
     fontSize: 18,
-    color: '#666',
-    marginBottom: 10,
-  },
-  statusText: {
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 30,
+    marginBottom: 20,
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '80%',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "80%",
   },
   button: {
-    backgroundColor: '#1E90FF',
+    backgroundColor: "#1E90FF",
     padding: 15,
     borderRadius: 10,
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-  },
-  resetButton: {
-    backgroundColor: '#FF6347',
-    padding: 15,
-    borderRadius: 10,
-  },
-  resetButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
   },
 });

@@ -61,7 +61,7 @@ const UserButton = ({ onPress }) => {
         source={avatar1} // Sempre exibe o avatar1
         style={styles.profileImage}
       />
-      <Text style={styles.username}>{userData.username || 'Usuário'}</Text>
+      <Text style={styles.username}>{userData.username || 'User2985'}</Text>
     </TouchableOpacity>
   );
 };

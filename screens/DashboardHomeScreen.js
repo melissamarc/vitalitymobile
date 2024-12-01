@@ -36,6 +36,12 @@ export default function DashboardHomeScreen() {
        <Text style={styles.today}> Hoje </Text> 
        <View style={styles.cabecalho}> 
         <Text> aqui vai ficar a qt de calorias  </Text> 
+         <TouchableOpacity
+        style={styles.devButton}
+        onPress={() => navigation.navigate('CaloriasDev')}
+      >
+        <Text style={styles.devButtonText}>Acessar Modo Desenvolvedor</Text>
+      </TouchableOpacity>
          </View>
         
     
