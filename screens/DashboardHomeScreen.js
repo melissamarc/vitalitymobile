@@ -4,10 +4,12 @@ import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore
 import { db } from '../firebaseconfig';
 import NutritionChart from './components/NutritionChart';
 import UserButton from './components/UserButton';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
 
 
 export default function DashboardHomeScreen() {
+  const navigation = useNavigation();
   const [dailyData, setDailyData] = useState([]);
   const [loading, setLoading] = useState(true);
 
