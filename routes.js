@@ -13,7 +13,7 @@ import Caminhada from './screens/Caminhada';
 import Corrida from './screens/Corrida';
 import Musculacao from './screens/Musculacao';
 import Detalhes from './screens/RecipeDetails';
-import WaterCounterScreen from './screens/WaterCounterScreen';
+import WaterScreen from './screens/WaterScreen';
 import FoodScreen from './screens/FoodScreen';
 import CaloriasDev from './screens/dev/CaloriasDev';
 
@@ -41,7 +41,7 @@ export default function AppRoutes() {
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
           <Stack.Screen name="Notification" component={NotificationScreen} />
           <Stack.Screen name="Detalhes" component={Detalhes} />
- <Stack.Screen name="Contador" component={WaterCounterScreen} />
+        <Stack.Screen name='WaterScreen' component={WaterScreen}/>
   <Stack.Screen name="Refeicoes" component={FoodScreen} />
   <Stack.Screen name="CaloriasDev" component={CaloriasDev} />
 

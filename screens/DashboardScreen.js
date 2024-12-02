@@ -6,7 +6,8 @@ import { firebase } from '../firebaseconfig';
 
 // Importando as telas
 import DashboardHomeScreen from './DashboardHomeScreen';
-import WaterCounterScreen from './WaterCounterScreen';
+import WaterScreen from './WaterScreen';
+
 import ExerciseScreen from './ExerciseScreen';
 import FoodScreen from './FoodScreen';
 import StepCounterScreen from './StepCounterScreen';
@@ -45,7 +46,7 @@ const FloatingMenu = ({ isOpen, onSelect }) => {
         <MaterialIcons name="restaurant" size={24} color="#007AFF" />
         <Text>Refeições</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuItem} onPress={() => onSelect('WaterCounterScreen')}>
+      <TouchableOpacity style={styles.menuItem} onPress={() => onSelect('WaterScreen')}>
         <FontAwesome5 name="tint" size={24} color="#007AFF" />
         <Text>Contador de Água</Text>
       </TouchableOpacity>
@@ -107,8 +108,8 @@ export default function DashboardScreen({ navigation }) {
       setMenuOpen(false); // Fecha o menu após selecionar
       if (screenName === 'FoodScreen') {
         navigation.navigate('Refeicoes'); // Nome da rota corrigido
-      } else if (screenName === 'WaterCounterScreen') {
-        navigation.navigate('Contador'); // Nome da rota corrigido
+      } else if (screenName === 'WaterScreen') {
+        navigation.navigate('WaterScreen'); // Nome da rota corrigido
       }
     }}
   />
