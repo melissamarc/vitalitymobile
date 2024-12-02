@@ -5,13 +5,17 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  ActivityIndicator,
+  ActivityIndicator, 
+  Image
 } from "react-native";
 import { Pedometer } from "expo-sensors";
 import { Ionicons } from "@expo/vector-icons";
-import { ProgressCircle, LineChart } from "react-native-svg-charts";
-import UserButton from "./components/UserButton";
 import { firebase } from "../firebaseconfig";
+import UserButton from './components/UserButton';
+import { ProgressCircle, LineChart } from "react-native-svg-charts";
+import FootImage from '../assets/pe.png'
+
+
 
 const StepCounterScreen = ({ navigation }: any) => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState(null);
@@ -71,10 +75,6 @@ const StepCounterScreen = ({ navigation }: any) => {
     return () => subscription && subscription.remove();
   }, []);
 
-  // Cálculo de porcentagens para os gráficos
-  const stepProgress = Math.min((steps / stepGoal) * 100, 100);
-  const calorieProgress = Math.min((caloriesBurned / calorieGoal) * 100, 100);
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -104,26 +104,21 @@ const StepCounterScreen = ({ navigation }: any) => {
         </View>
       </View>
 
-      {/* Gráfico Circular de Progresso */}
-      <View style={styles.card}>
-        <Text style={styles.title}>Seu Progresso</Text>
-        <ProgressCircle
-          style={styles.progressCircle}
-          progress={stepProgress / 100}
-          progressColor="#4CAF50"
-          backgroundColor="#E0E0E0"
-          strokeWidth={10}
-        >
-          <Text style={styles.progressText}>{`${stepProgress.toFixed(0)}%`}</Text>
-        </ProgressCircle>
-        <Text style={styles.subTitle}>Passos: {steps}/{stepGoal}</Text>
-        <Text style={styles.subTitle}>
-          Calorias: {caloriesBurned.toFixed(1)} kcal / {calorieGoal} kcal
-        </Text>
+      {/* Cartão de Progresso */}
+      <View style={styles.progressCard}>
+        <View style={styles.textContainer}>
+          <Text style={styles.metricValue}>{steps}</Text>
+          <Text style={styles.metricLabel}>Passos</Text>
+          <Text style={styles.metricValue}>{caloriesBurned.toFixed(1)} kcal</Text>
+          <Text style={styles.metricLabel}>Calorias</Text>
+        </View>
+        <View style={styles.imageContainer}>
+        <Image source={FootImage} style={styles.imageStyle} />
+        </View>
       </View>
-
-      {/* Informações Adicionais em Cartões */}
-      <View style={styles.cardRow}>
+     
+       {/* Informações Adicionais em Cartões */}
+       <View style={styles.cardRow}>
         <View style={styles.infoCard}>
           <Text style={styles.cardTitle}>Calorias diárias</Text>
           <Text style={styles.cardValue}>{caloriesBurned.toFixed(1)} kcal</Text>
@@ -146,6 +141,13 @@ const StepCounterScreen = ({ navigation }: any) => {
         />
         <Text style={styles.graphTitle}>Progresso diário</Text>
       </View>
+
+
+
+
+
+
+
     </View>
   );
 };
@@ -153,6 +155,7 @@ const StepCounterScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+   paddingHorizontal: 10
   },
   loadingContainer: {
     flex: 1,
@@ -174,45 +177,43 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 10,
   },
-  card: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 20,
+  progressCard: {
+    flexDirection: "row",
+    backgroundColor: "#7dcd9a",
+    padding: 25,
+    borderRadius: 20,
+    marginTop: 15,
     alignItems: "center",
+    justifyContent: "space-between",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
     elevation: 5,
   },
-  progressCircle: {
-    height: 150,
-    width: 150,
+  textContainer: {
+    flex: 1,
     justifyContent: "center",
-    alignItems: "center",
   },
-  progressText: {
-    position: "absolute",
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#4CAF50",
+  imageStyle: {
+    marginLeft: 20,
+    width: 150,
+    height: 150
   },
-  title: {
-    fontSize: 20,
+  metricValue: {
+    fontSize: 32,
     fontWeight: "bold",
+    color: "#fff",
+  },
+  metricLabel: {
+    fontSize: 18,
+    color: "#fff",
     marginBottom: 10,
-    color: "#333",
-  },
-  subTitle: {
-    fontSize: 16,
-    color: "#777",
-    marginTop: 5,
   },
   cardRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
+    marginTop: 20
   },
   infoCard: {
     flex: 1,
@@ -220,6 +221,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 5,
     borderRadius: 12,
+    height: 200,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -235,7 +237,7 @@ const styles = StyleSheet.create({
   cardValue: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#4CAF50",
+    color: "#7dcd9a",
   },
   cardMeta: {
     fontSize: 14,
@@ -257,6 +259,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#777",
   },
+
 });
 
 export default StepCounterScreen;

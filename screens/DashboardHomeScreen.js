@@ -1,64 +1,74 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Biblioteca para os ícones
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text , TouchableOpacity, ActivityIndicator } from 'react-native';
+import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { db } from '../firebaseconfig';
+import NutritionChart from './components/NutritionChart';
 import UserButton from './components/UserButton';
+import { Ionicons } from "@expo/vector-icons";
+
 
 export default function DashboardHomeScreen() {
-  const navigation = useNavigation();
+  const [dailyData, setDailyData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogOut = () => {
-    // Aqui pode ser adicionado o processo de logout
-    navigation.navigate('Home'); // Redireciona para a tela "Home"
-  };
+  useEffect(() => {
+    const fetchDailyData = async () => {
+      try {
+        setLoading(true);
+        const startOfDay = Timestamp.fromDate(new Date(new Date().setHours(0, 0, 0, 0)));
+        const mealsQuery = query(
+          collection(db, 'userMeals'),
+          where('date', '>=', startOfDay)
+        );
+        const mealsSnapshot = await getDocs(mealsQuery);
+        const mealsList = mealsSnapshot.docs.map((doc) => doc.data());
+        setDailyData(mealsList);
+      } catch (error) {
+        console.error('Erro ao buscar dados diários:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDailyData();
+  }, []);
+
+  const chartData = [
+    { name: 'Calorias', population: dailyData.reduce((acc, food) => acc + food.calories, 0), color: '#0088FE' },
+    { name: 'Gorduras', population: dailyData.reduce((acc, food) => acc + food.fat, 0), color: '#00C49F' },
+    { name: 'Proteínas', population: dailyData.reduce((acc, food) => acc + food.protein, 0), color: '#FFBB28' },
+  ];
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Carregando dados...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Barra de topo com ícones */}
-      <View style={styles.header}>
+        <View style={styles.header}>
         <UserButton />
-
         <View style={styles.icons}>
-          {/* Botão de Notificações */}
           <TouchableOpacity
-            onPress={() => navigation.navigate('Notification')}
+            onPress={() => navigation.navigate("Notification")}
             style={styles.iconButton}
           >
             <Ionicons name="notifications-outline" size={24} color="black" />
           </TouchableOpacity>
-
-          {/* Botão de Perfil */}
           <TouchableOpacity
-            onPress={() => navigation.navigate('ProfileScreen')}
+            onPress={() => navigation.navigate("ProfileScreen")}
             style={styles.iconButton}
           >
             <Ionicons name="person-outline" size={24} color="black" />
           </TouchableOpacity>
-
-          {/* Botão de Logout */}
-          <TouchableOpacity
-            onPress={handleLogOut}
-            style={styles.logButton}
-            accessibilityLabel="Log Out"
-          >
-            <Ionicons name="log-out-outline" size={24} color="black" />
-          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Conteúdo principal */}
-      <View style={styles.content}>
-        <Text style={styles.today}>Hoje</Text>
-        <View style={styles.cabecalho}>
-          <Text>Aqui vai ficar a quantidade de calorias</Text>
-          <TouchableOpacity
-            style={styles.devButton}
-            onPress={() => navigation.navigate('CaloriasDev')}
-          >
-            <Text style={styles.devButtonText}>Acessar Modo Desenvolvedor</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+     
+      <NutritionChart data={chartData} />
     </View>
   );
 }
@@ -66,45 +76,35 @@ export default function DashboardHomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 10
+  
+   
   },
-  today: {
-    paddingLeft: 13,
-    marginTop: 13,
-    fontSize: 18,
-  },
+
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 5,
     paddingTop: 30,
   },
   icons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
+    flexDirection: "row",
+    paddingHorizontal: 20,
     paddingTop: 10,
   },
   iconButton: {
-    padding: 15,
-    marginHorizontal: 10, // Espaçamento de 10 unidades entre os ícones
+    padding: 10,
   },
-
-
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+ 
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  cabecalho: {
-    margin: 'auto',
-    marginTop: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ddd',
-    width: '95%',
-    height: '40%',
-    borderRadius: 20,
+  loadingText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
