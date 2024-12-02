@@ -1,58 +1,49 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+} from "react-native";
 
-// Importe os avatares diretamente da pasta assets
-import avatar1 from '../assets/avatar1.png';
-import avatar2 from '../assets/avatar2.png';
-import avatar3 from '../assets/avatar3.png';
-import avatar4 from '../assets/avatar4.png';
+export default function ProfileScreen({ navigation }) {
+  const handleEditAccount = () => {
+    navigation.navigate("EditAccountScreen"); // Substitua "EditAccountScreen" pelo nome da tela desejada
+  };
 
-export default function ProfileScreen() {
-  const [selectedAvatar, setSelectedAvatar] = useState(null);
-  const db = getFirestore();
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const handleSettings = () => {
+    navigation.navigate("SettingsScreen"); // Substitua "SettingsScreen" pelo nome da tela desejada
+  };
 
-  // Lista de avatares disponíveis
-  const avatars = [avatar1, avatar2, avatar3, avatar4];
-
-  // Função para atualizar a foto do avatar no Firestore
-  const updateAvatar = async (avatarUrl) => {
-    try {
-      if (user) {
-        // Atualiza o avatar no Firestore
-        await setDoc(doc(db, 'users', user.uid), {
-          photoURL: avatarUrl, // Campo photoURL no Firestore
-        }, { merge: true });
-        Alert.alert('Sucesso', 'Foto de perfil atualizada!');
-        setSelectedAvatar(avatarUrl); // Atualiza a foto localmente
-      } else {
-        Alert.alert('Erro', 'Usuário não logado');
-      }
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível atualizar a foto de perfil.');
-    }
+  const handleBack = () => {
+    navigation.goBack();
   };
 
   return (
     <View style={styles.container}>
-      <Text>Escolha uma foto de perfil</Text>
-      <View style={styles.avatarContainer}>
-        {avatars.map((avatar, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.avatarButton,
-              selectedAvatar === avatar && styles.selectedAvatar,
-            ]}
-            onPress={() => updateAvatar(avatar)}
-          >
-            <Image source={avatar} style={styles.avatarImage} />
-          </TouchableOpacity>
-        ))}
-      </View>
+      {/* Foto de Perfil */}
+      <Image
+        source={require("../assets/profilepicture.png")} // Substitua pelo caminho correto da imagem ou use um estado para imagem dinâmica
+        style={styles.profileImage}
+      />
+      <Text style={styles.profileName}>Seu Nome</Text>
+
+      {/* Botão Editar Conta */}
+      <TouchableOpacity style={styles.button} onPress={handleEditAccount}>
+        <Text style={styles.buttonText}>Editar Conta</Text>
+      </TouchableOpacity>
+
+      {/* Botão Configuração */}
+      <TouchableOpacity style={styles.button} onPress={handleSettings}>
+        <Text style={styles.buttonText}>Configuração</Text>
+      </TouchableOpacity>
+
+      {/* Botão Voltar */}
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+        <Text style={styles.backButtonText}>Voltar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -60,28 +51,47 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+    backgroundColor: "#F5F5F5",
   },
-  avatarContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: 20,
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 20,
   },
-  avatarButton: {
-    margin: 10,
+  profileName: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 40,
+  },
+  button: {
+    width: "80%",
+    padding: 15,
+    backgroundColor: "#4CAF50",
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  backButton: {
+    marginTop: 50,
     padding: 10,
-    borderRadius: 75,
-    borderWidth: 2,
-    borderColor: '#ddd',
+    backgroundColor: "#E0E0E0",
+    borderRadius: 10,
+    alignItems: "center",
+    width: "60%",
   },
-  selectedAvatar: {
-    borderColor: '#00f',
-  },
-  avatarImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  backButtonText: {
+    color: "#333",
+    fontSize: 14,
+    fontWeight: "bold",
   },
 });

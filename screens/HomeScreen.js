@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 export default function HomeScreen({ navigation }) {
@@ -21,20 +21,19 @@ export default function HomeScreen({ navigation }) {
 
       {/* Botões na parte inferior */}
       <View style={styles.buttonContainer}>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Entrar"
-            onPress={() => navigation.navigate('Login')}
-            color="#fff"
-          />
-        </View>
-        <View style={styles.buttonWrapper2}>
-          <Button
-            title="Criar Conta"
-            onPress={() => navigation.navigate('Signup')}
-            color="#7DCD9A"
-          />
-        </View>
+        <TouchableOpacity
+          style={[styles.buttonWrapper, { backgroundColor: '#DDF' }]} // Cor de fundo do botão "Entrar"
+          onPress={() => navigation.navigate('Login')}
+        >
+          <Text style={styles.buttonText}>Login</Text> {/* Cor do texto no botão "Entrar" */}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.buttonWrapper2, { backgroundColor: '#7DCD9A' }]} // Cor de fundo do botão "Criar Conta"
+          onPress={() => navigation.navigate('Signup')}
+        >
+          <Text style={[styles.buttonText, { color: '#DDF' }]}>Cadastre-se</Text> {/* Cor do texto no botão "Criar Conta" */}
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 38,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 20, // Ajuste para que o texto fique próximo ao logo
     textAlign: 'center',
   },
@@ -77,17 +76,21 @@ const styles = StyleSheet.create({
     width: '100%', // A largura dos botões ocupa toda a largura disponível dentro do container
     marginVertical: 10, // Espaço entre os botões
     borderRadius: 25,
-    backgroundColor: '#7DCD9A',
     overflow: 'hidden',
+    paddingVertical: 15,
+    alignItems: 'center',
   },
-    buttonWrapper2: {
+  buttonWrapper2: {
     width: '100%', // A largura dos botões ocupa toda a largura disponível dentro do container
     marginVertical: 10, // Espaço entre os botões
     borderRadius: 25,
-    backgroundColor: '#DDF',
     overflow: 'hidden',
-   
+    paddingVertical: 15,
+    alignItems: 'center',
   },
-  
-
+  buttonText: {
+    color: '#7DCD9A', // Cor padrão do texto
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });

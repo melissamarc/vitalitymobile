@@ -15,10 +15,19 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {/* Imagem do logo */}
       <Image
-        source={require('../assets/logo.png')} // Caminho da imagem do logo
+        source={require('../assets/iconhome.png')} // Caminho da imagem do logo
         style={styles.imagemlogin}
       />
+
+      {/* Título abaixo da imagem */}
+      <Text style={styles.titleText}>Bem-vindo de volta!</Text>
+      
+      {/* Parágrafo abaixo do título */}
+      <Text style={styles.paragraphText}>
+        Faça login para acessar sua conta {"\n"} e gerenciar sua saúde.
+      </Text>
 
       <View style={styles.loginBox}>
         <TextInput
@@ -45,7 +54,6 @@ export default function LoginScreen({ navigation }) {
           <TouchableOpacity style={styles.socialButton}>
             <FontAwesome name="google" size={24} color="black" />
           </TouchableOpacity>
-         
         </View>
 
         <View style={styles.signUpSection}>
@@ -71,7 +79,26 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 75,
+    marginBottom: 20,  // Ajustei o espaçamento entre a imagem e o texto abaixo dela
   },
+  
+  titleText: {
+    fontSize: 24,      // Tamanho da fonte do título
+    fontWeight: 'bold',
+    marginBottom: 10,     // Espaço entre a imagem e o título
+    textAlign: 'center',
+    marginTop: 10,
+  },
+
+  paragraphText: {
+    fontSize: 18,      // Tamanho da fonte do parágrafo
+    fontWeight: '400',
+    color: '#555',     // Cor do texto do parágrafo
+    marginBottom: 40,      // Reduzi o espaço entre o título e o parágrafo para aproximá-los
+    marginTop: 10,
+    textAlign: 'center',
+  },
+
   loginBox: {
     width: '90%',
     backgroundColor: 'white',
@@ -124,4 +151,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

@@ -16,34 +16,37 @@ import Detalhes from './screens/RecipeDetails';
 import WaterScreen from './screens/WaterScreen';
 import FoodScreen from './screens/FoodScreen';
 import CaloriasDev from './screens/dev/CaloriasDev';
+import EditAccountScreen from './screens/EditAccountScreen';
 
 const Stack = createStackNavigator();
 
 export default function AppRoutes() {
   return (
     <NavigationContainer>
-  
-      <Stack.Navigator 
-       screenOptions={{
+
+      <Stack.Navigator
+        screenOptions={{
           headerShown: false, // Oculta o header para todas as telas
         }}
-  > 
-      
+      >
+
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen}
-        
-         />
-          <Stack.Screen name="Caminhada" component={Caminhada} />
-            <Stack.Screen name="Corrida" component={Corrida} />
-              <Stack.Screen name="Musculacao" component={Musculacao} />
+
+        />
+        <Stack.Screen name="Caminhada" component={Caminhada} />
+        <Stack.Screen name="Corrida" component={Corrida} />
+        <Stack.Screen name="Musculacao" component={Musculacao} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-          <Stack.Screen name="Notification" component={NotificationScreen} />
-          <Stack.Screen name="Detalhes" component={Detalhes} />
-        <Stack.Screen name='WaterScreen' component={WaterScreen}/>
-  <Stack.Screen name="Refeicoes" component={FoodScreen} />
-  <Stack.Screen name="CaloriasDev" component={CaloriasDev} />
+        <Stack.Screen name='EditAccountScreen' component={EditAccountScreen} />
+        <Stack.Screen name="Notification" component={NotificationScreen} />
+        <Stack.Screen name="Detalhes" component={Detalhes} />
+        <Stack.Screen name='WaterScreen' component={WaterScreen} />
+        <Stack.Screen name="Refeicoes" component={FoodScreen} />
+        <Stack.Screen name="CaloriasDev" component={CaloriasDev} />
+
 
       </Stack.Navigator>
     </NavigationContainer>

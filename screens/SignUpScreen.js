@@ -8,6 +8,7 @@ import {
   StyleSheet,
   StatusBar,
   FlatList,
+  Image,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { firebase } from "../firebaseconfig";
@@ -111,10 +112,13 @@ export default function SignupScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar hidden />
 
+      {/* Top Section com a imagem e o texto */}
       <View style={styles.topSection}>
+        <Image source={require("../assets/iconhome.png")} style={styles.logo} />
         <Text style={styles.headerText}>Criar Conta</Text>
       </View>
 
+      {/* Formulário */}
       <View style={styles.form}>
         <TextInput
           placeholder="Nome completo"
@@ -215,14 +219,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     padding: 20,
-    backgroundColor: '#ffff0',
-
+    backgroundColor: "#ffff0",
+    paddingTop: 80,
   },
   topSection: {
-    paddingTop: 40,
+    paddingTop: 20, // Reduzido para mover o logo mais próximo ao topo
     paddingBottom: 20,
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 20, // Reduzido para aproximar ainda mais o logo ao topo
+  },
+  logo: {
+    width: 100, // Largura da imagem
+    height: 100, // Altura da imagem
+    resizeMode: "contain",
+    marginBottom: 10, // Espaço entre a imagem e o texto "Criar Conta"
   },
   headerText: {
     fontSize: 30,
@@ -230,42 +240,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   form: {
-    width: '100%',
-    backgroundColor: 'white',
+    width: "100%",
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
+    marginTop: 20, // Adicione ou aumente este valor para mover o formulário mais para baixo
   },
   input: {
-      width: '100%',
-      padding: 15,
-      borderWidth: 1,
-      borderColor: '#DDD',
-      borderRadius: 10,
-      marginBottom: 15,
-    },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "white",
+    width: "100%",
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#DDD",
     borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: "#DDD",
-    borderRadius: 10,
-  },
-  closeButtonText: {
-    color: "#333",
-    fontWeight: "bold",
+    marginBottom: 15,
   },
   signupButton: {
     marginTop: 20,
@@ -273,7 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#7DCD9A",
     borderRadius: 10,
     alignItems: "center",
-    width: '100%',
+    width: "100%",
   },
   signupButtonText: {
     color: "white",
