@@ -1,53 +1,74 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text , TouchableOpacity, ActivityIndicator } from 'react-native';
-import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseconfig';
+import WaterCounter from './components/WaterCount';
+
 import NutritionChart from './components/NutritionChart';
 import UserButton from './components/UserButton';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
+import StepSummary from './components/StepSumary';
 
 
 export default function DashboardHomeScreen() {
   const navigation = useNavigation();
-  const [dailyData, setDailyData] = useState([]);
-  const [loading, setLoading] = useState(true);
+ 
+
+
+ const [totalWater, setTotalWater] = useState(0);
 
   useEffect(() => {
-    const fetchDailyData = async () => {
-      try {
-        setLoading(true);
-        const startOfDay = Timestamp.fromDate(new Date(new Date().setHours(0, 0, 0, 0)));
-        const mealsQuery = query(
-          collection(db, 'userMeals'),
-          where('date', '>=', startOfDay)
-        );
-        const mealsSnapshot = await getDocs(mealsQuery);
-        const mealsList = mealsSnapshot.docs.map((doc) => doc.data());
-        setDailyData(mealsList);
-      } catch (error) {
-        console.error('Erro ao buscar dados diários:', error);
-      } finally {
-        setLoading(false);
+    const loadWaterData = async () => {
+      const storedTotalWater = await AsyncStorage.getItem('totalWater');
+      if (storedTotalWater) {
+        setTotalWater(Number(storedTotalWater));
       }
     };
 
-    fetchDailyData();
+    loadWaterData();
   }, []);
 
-  const chartData = [
-    { name: 'Calorias', population: dailyData.reduce((acc, food) => acc + food.calories, 0), color: '#0088FE' },
-    { name: 'Gorduras', population: dailyData.reduce((acc, food) => acc + food.fat, 0), color: '#00C49F' },
-    { name: 'Proteínas', population: dailyData.reduce((acc, food) => acc + food.protein, 0), color: '#FFBB28' },
-  ];
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Carregando dados...</Text>
-      </View>
-    );
-  }
+  const [chartData, setChartData] = useState([]);
+
+  // Função para calcular os dados do gráfico
+  const calculateChartData = (meals) => {
+    return [
+      {
+        name: 'Calorias',
+        population: meals.reduce((acc, meal) => acc + (meal.calories || 0), 0),
+        color: '#0088FE',
+      },
+      {
+        name: 'Gorduras',
+        population: meals.reduce((acc, meal) => acc + (meal.fat || 0), 0),
+        color: '#00C49F',
+      },
+      {
+        name: 'Proteínas',
+        population: meals.reduce((acc, meal) => acc + (meal.protein || 0), 0),
+        color: '#FFBB28',
+      },
+      {
+        name: 'Carboidratos',
+        population: meals.reduce((acc, meal) => acc + (meal.carbs || 0), 0),
+        color: '#FF6347',
+      },
+    ];
+  };
+
+  // Monitorar dados do Firestore em tempo real
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'userMeals'), (snapshot) => {
+      const meals = snapshot.docs.map((doc) => doc.data());
+      setChartData(calculateChartData(meals));
+    });
+
+    return () => unsubscribe(); // Cleanup
+  }, []);
+
 
   return (
     <View style={styles.container}>
@@ -55,10 +76,10 @@ export default function DashboardHomeScreen() {
         <UserButton />
         <View style={styles.icons}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Notification")}
+            onPress={() => navigation.navigate("SettingsScreen")}
             style={styles.iconButton}
           >
-            <Ionicons name="notifications-outline" size={24} color="black" />
+            <Ionicons name="settings-outline" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("ProfileScreen")}
@@ -71,6 +92,11 @@ export default function DashboardHomeScreen() {
 
      
       <NutritionChart data={chartData} />
+<View style={styles.content}>
+   <WaterCounter/>
+       <StepSummary/>
+</View>
+      
     </View>
   );
 }
@@ -81,6 +107,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   
    
+  },
+ 
+  content: {
+   flexDirection: 'row'
   },
 
   header: {

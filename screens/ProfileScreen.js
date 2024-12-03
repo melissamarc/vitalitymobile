@@ -1,48 +1,61 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Image,
-  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen({ navigation }) {
+  const [avatar, setAvatar] = useState(require("../assets/semfoto.png")); // Avatar padrão
+
+  useEffect(() => {
+    const loadAvatar = async () => {
+      try {
+        const savedAvatar = await AsyncStorage.getItem("userAvatar");
+        if (savedAvatar) {
+          setAvatar(JSON.parse(savedAvatar));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar avatar:", error);
+      }
+    };
+    loadAvatar();
+  }, []);
+
+  const handleAvatarChange = async (selectedAvatar) => {
+    try {
+      setAvatar(selectedAvatar);
+      await AsyncStorage.setItem("userAvatar", JSON.stringify(selectedAvatar));
+    } catch (error) {
+      console.error("Erro ao salvar avatar:", error);
+    }
+  };
+
   const handleEditAccount = () => {
-    navigation.navigate("EditAccountScreen"); // Substitua "EditAccountScreen" pelo nome da tela desejada
-  };
-
-  const handleSettings = () => {
-    navigation.navigate("SettingsScreen"); // Substitua "SettingsScreen" pelo nome da tela desejada
-  };
-
-  const handleBack = () => {
-    navigation.goBack();
+    navigation.navigate("EditAccountScreen", {
+      onAvatarSelect: handleAvatarChange,
+    });
   };
 
   return (
     <View style={styles.container}>
-      {/* Foto de Perfil */}
-      <Image
-        source={require("../assets/profilepicture.png")} // Substitua pelo caminho correto da imagem ou use um estado para imagem dinâmica
-        style={styles.profileImage}
-      />
+      <View style={styles.avatarContainer}>
+        <Image source={avatar} style={styles.profileImage} />
+        <TouchableOpacity
+          style={styles.editIcon}
+          onPress={handleEditAccount}
+        >
+          <Text style={styles.editText}>✏️</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.profileName}>Seu Nome</Text>
 
-      {/* Botão Editar Conta */}
       <TouchableOpacity style={styles.button} onPress={handleEditAccount}>
         <Text style={styles.buttonText}>Editar Conta</Text>
-      </TouchableOpacity>
-
-      {/* Botão Configuração */}
-      <TouchableOpacity style={styles.button} onPress={handleSettings}>
-        <Text style={styles.buttonText}>Configuração</Text>
-      </TouchableOpacity>
-
-      {/* Botão Voltar */}
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>Voltar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -56,11 +69,26 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#F5F5F5",
   },
+  avatarContainer: {
+    position: "relative",
+    marginBottom: 20,
+  },
   profileImage: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginBottom: 20,
+  },
+  editIcon: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#FFF",
+    borderRadius: 15,
+    padding: 5,
+    elevation: 3,
+  },
+  editText: {
+    fontSize: 16,
   },
   profileName: {
     fontSize: 24,
@@ -79,19 +107,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  backButton: {
-    marginTop: 50,
-    padding: 10,
-    backgroundColor: "#E0E0E0",
-    borderRadius: 10,
-    alignItems: "center",
-    width: "60%",
-  },
-  backButtonText: {
-    color: "#333",
-    fontSize: 14,
     fontWeight: "bold",
   },
 });

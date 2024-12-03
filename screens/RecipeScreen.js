@@ -40,10 +40,10 @@ export default function RecipeScreen() {
         <UserButton />
         <View style={styles.icons}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Notification")}
+            onPress={() => navigation.navigate("SettingsScreen")}
             style={styles.iconButton}
           >
-            <Ionicons name="notifications-outline" size={24} color="black" />
+            <Ionicons name="settings-outline" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("ProfileScreen")}

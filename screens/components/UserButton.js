@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator, Alert } from 'react-native';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import semfoto from '../../assets/semfoto.png'; // Avatar padrão
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserButton = ({ onPress, username, profilePhoto }) => {
   const [userData, setUserData] = useState(null);
+  const [avatar, setAvatar] = useState(semfoto); // Avatar inicial padrão
   const [loading, setLoading] = useState(true);
 
   const auth = getAuth();
@@ -13,6 +15,21 @@ const UserButton = ({ onPress, username, profilePhoto }) => {
   const user = auth.currentUser;
 
   useEffect(() => {
+    // Carregar o avatar do AsyncStorage ao iniciar
+    const loadAvatar = async () => {
+      try {
+        const savedAvatar = await AsyncStorage.getItem('userAvatar');
+        if (savedAvatar) {
+          setAvatar(JSON.parse(savedAvatar)); // Avatar carregado do AsyncStorage
+        } else {
+          setAvatar(semfoto); // Se não houver avatar salvo, usar o avatar padrão
+        }
+      } catch (error) {
+        console.error('Erro ao carregar avatar:', error);
+      }
+    };
+
+    // Carregar os dados do usuário
     const fetchUserData = async () => {
       if (!user) {
         setLoading(false);
@@ -34,8 +51,10 @@ const UserButton = ({ onPress, username, profilePhoto }) => {
       }
     };
 
-    fetchUserData();
-  }, [user]);
+    loadAvatar(); // Carregar avatar ao iniciar a tela
+    fetchUserData(); // Buscar dados do usuário
+
+  }, [user]); // Carregar avatar e dados quando o usuário for atualizado
 
   if (loading) {
     return (
@@ -48,17 +67,10 @@ const UserButton = ({ onPress, username, profilePhoto }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={userData?.profilePhoto ? { uri: userData.profilePhoto } : semfoto}
+        source={avatar ? { uri: avatar } : semfoto}
         style={styles.profileImage}
       />
-      <Text style={styles.username}>{userData?.username || 'Nome do Usuário'}</Text>
-
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={onPress} // Navega para a tela de edição
-      >
-        <Text style={styles.editText}>Editar Conta</Text>
-      </TouchableOpacity>
+      <Text style={styles.username}>{userData?.username || 'Usuário'}</Text>
     </View>
   );
 };
@@ -72,8 +84,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   profileImage: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 25,
     marginRight: 10,
   },
@@ -81,14 +93,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-  },
-  editButton: {
-    marginLeft: 10,
-  },
-  editText: {
-    fontSize: 14,
-    color: "#4CAF50",
-    marginTop: 10,
   },
   loaderContainer: {
     justifyContent: 'center',

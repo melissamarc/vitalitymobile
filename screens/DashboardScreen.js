@@ -8,7 +8,7 @@ import { firebase } from '../firebaseconfig';
 import DashboardHomeScreen from './DashboardHomeScreen';
 import WaterScreen from './WaterScreen';
 
-import ExerciseScreen from './ExerciseScreen';
+import Exercicio from './exercises/ExerciseScreen';
 import FoodScreen from './FoodScreen';
 import StepCounterScreen from './StepCounterScreen';
 import RecipeScreen from './RecipeScreen';
@@ -74,7 +74,7 @@ export default function DashboardScreen({ navigation }) {
           tabBarIcon: ({ color, size, focused }) => {
             if (route.name === 'Dashboard') {
               return <Ionicons name="stats-chart" size={size} color={focused ? '#7dcd9a' : color} />;
-            } else if (route.name === 'Exercícios') {
+            } else if (route.name === 'Exercicio') {
               return <MaterialIcons name="fitness-center" size={size} color={focused ? '#7dcd9a' : color} />;
             } else if (route.name === 'Receitas') {
               return <MaterialIcons name="book" size={size} color={focused ? '#7dcd9a' : color} />;
@@ -89,7 +89,7 @@ export default function DashboardScreen({ navigation }) {
         })}
       >
         <Tab.Screen name="Dashboard" component={DashboardHomeScreen} />
-        <Tab.Screen name="Exercícios" component={ExerciseScreen} />
+        <Tab.Screen name="Exercicio" component={Exercicio} />
         <Tab.Screen
           name="Add"
           component={() => null} // Botão "+" não renderiza tela

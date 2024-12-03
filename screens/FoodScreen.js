@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
-import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, query, where, Timestamp, doc } from 'firebase/firestore';
 import { db } from '../firebaseconfig';
 
 const FoodScreen = () => {
@@ -69,6 +69,27 @@ const FoodScreen = () => {
     }
   };
 
+  // Função para limpar refeições registradas
+  const handleClearMeals = async () => {
+    try {
+      const mealsCollection = collection(db, 'userMeals');
+      const mealsSnapshot = await getDocs(mealsCollection);
+
+      // Exclui cada refeição do Firestore
+      const deletePromises = mealsSnapshot.docs.map((docItem) => deleteDoc(doc(db, 'userMeals', docItem.id)));
+      await Promise.all(deletePromises);
+
+      // Atualiza o estado local
+      setSelectedFoods([]);
+      setWeeklySummary([]);
+
+      Alert.alert('Sucesso', 'Todas as refeições foram limpas.');
+    } catch (error) {
+      console.error('Erro ao limpar refeições:', error);
+      Alert.alert('Erro', 'Não foi possível limpar as refeições.');
+    }
+  };
+
   // Dados para o gráfico
   const chartData = [
     { name: 'Calorias', population: selectedFoods.reduce((acc, food) => acc + food.calories, 0), color: '#0088FE' },
@@ -129,16 +150,9 @@ const FoodScreen = () => {
         absolute
       />
 
-      <Text style={styles.chartHeader}>Resumo Semanal</Text>
-      <FlatList
-        data={weeklySummary}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Text style={styles.summaryText}>
-            {item.name} - {item.calories} Calorias
-          </Text>
-        )}
-      />
+      <TouchableOpacity onPress={handleClearMeals} style={styles.clearButton}>
+        <Text style={styles.clearButtonText}>Limpar Refeições</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -181,6 +195,18 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
   },
+  clearButton: {
+    backgroundColor: '#FF6347',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  clearButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   emptyText: {
     textAlign: 'center',
     color: '#aaa',
@@ -192,10 +218,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     textAlign: 'center',
-  },
-  summaryText: {
-    fontSize: 16,
-    marginVertical: 5,
   },
   loadingText: {
     fontSize: 18,

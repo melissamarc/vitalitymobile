@@ -5,17 +5,16 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  ActivityIndicator, 
+  ActivityIndicator,
   Image
 } from "react-native";
 import { Pedometer } from "expo-sensors";
 import { Ionicons } from "@expo/vector-icons";
 import { firebase } from "../firebaseconfig";
 import UserButton from './components/UserButton';
-import { ProgressCircle, LineChart } from "react-native-svg-charts";
-import FootImage from '../assets/pe.png'
-
-
+import { LineChart } from "react-native-svg-charts";
+import FootImage from '../assets/pe.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StepCounterScreen = ({ navigation }: any) => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState(null);
@@ -59,6 +58,30 @@ const StepCounterScreen = ({ navigation }: any) => {
     fetchUserGoals();
   }, []);
 
+  // Carregar dados do AsyncStorage
+  useEffect(() => {
+    const loadData = async () => {
+      const storedSteps = await AsyncStorage.getItem('steps');
+      const storedCalories = await AsyncStorage.getItem('caloriesBurned');
+      if (storedSteps) {
+        setSteps(Number(storedSteps));
+      }
+      if (storedCalories) {
+        setCaloriesBurned(Number(storedCalories));
+      }
+    };
+    loadData();
+  }, []);
+
+  // Salvar passos e calorias no AsyncStorage
+  useEffect(() => {
+    const saveData = async () => {
+      await AsyncStorage.setItem('steps', String(steps));
+      await AsyncStorage.setItem('caloriesBurned', String(caloriesBurned));
+    };
+    saveData();
+  }, [steps, caloriesBurned]);
+
   // Configurar pedômetro
   useEffect(() => {
     Pedometer.isAvailableAsync().then(
@@ -90,10 +113,10 @@ const StepCounterScreen = ({ navigation }: any) => {
         <UserButton />
         <View style={styles.icons}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Notification")}
+            onPress={() => navigation.navigate("SettingsScreen")}
             style={styles.iconButton}
           >
-            <Ionicons name="notifications-outline" size={24} color="black" />
+            <Ionicons name="settings-outline" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("ProfileScreen")}
@@ -113,12 +136,12 @@ const StepCounterScreen = ({ navigation }: any) => {
           <Text style={styles.metricLabel}>Calorias</Text>
         </View>
         <View style={styles.imageContainer}>
-        <Image source={FootImage} style={styles.imageStyle} />
+          <Image source={FootImage} style={styles.imageStyle} />
         </View>
       </View>
-     
-       {/* Informações Adicionais em Cartões */}
-       <View style={styles.cardRow}>
+
+      {/* Informações Adicionais em Cartões */}
+      <View style={styles.cardRow}>
         <View style={styles.infoCard}>
           <Text style={styles.cardTitle}>Calorias diárias</Text>
           <Text style={styles.cardValue}>{caloriesBurned.toFixed(1)} kcal</Text>
@@ -141,13 +164,6 @@ const StepCounterScreen = ({ navigation }: any) => {
         />
         <Text style={styles.graphTitle}>Progresso diário</Text>
       </View>
-
-
-
-
-
-
-
     </View>
   );
 };
@@ -155,7 +171,7 @@ const StepCounterScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   paddingHorizontal: 10
+    paddingHorizontal: 10
   },
   loadingContainer: {
     flex: 1,
@@ -254,12 +270,11 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   graphTitle: {
-    textAlign: "center",
     marginTop: 10,
+    textAlign: "center",
     fontSize: 16,
-    color: "#777",
-  },
-
+    color: "#333",
+  }
 });
 
 export default StepCounterScreen;

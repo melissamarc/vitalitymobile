@@ -8,7 +8,7 @@ import {
   Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import UserButton from './components/UserButton';
+import UserButton from '../components/UserButton';
 import { Ionicons } from "@expo/vector-icons";
 
 
@@ -17,9 +17,9 @@ export default function Exercicio() {
 
   // Dados dos exercícios sugeridos
   const suggestedWorkouts = [
-    { id: 1, name: 'Yoga', icon: require('../assets/gym.png') },
-    { id: 2, name: 'Weightlifting', icon: require('../assets/corrida.png') },
-    { id: 3, name: 'Cycling', icon: require('../assets/corrida.png') },
+    { id: 1, name: 'Yoga', icon: require('../../assets/gym.png') },
+    { id: 2, name: 'Weightlifting', icon: require('../../assets/corrida.png') },
+    { id: 3, name: 'Cycling', icon: require('../../assets/corrida.png') },
   ];
 
   // Dados dos exercícios "Trending"
@@ -29,21 +29,21 @@ export default function Exercicio() {
       name: 'Caminhada',
       description: 'Ande ao ar livre e aproveite a natureza.',
       calories: 200,
-      image: require('../assets/corrida.png'),
+      image: require('../../assets/corrida.png'),
     },
     {
       id: 2,
       name: 'Corrida',
       description: 'Melhore seu condicionamento físico correndo.',
       calories: 400,
-      image: require('../assets/corrida.png'),
+      image: require('../../assets/corrida.png'),
     },
     {
       id: 3,
-      name: 'Musculação',
+      name: 'Musculacao',
       description: 'Ganhe força e tonifique seus músculos.',
       calories: 300,
-      image: require('../assets/corrida.png'),
+      image: require('../../assets/corrida.png'),
     },
   ];
 
@@ -53,10 +53,10 @@ export default function Exercicio() {
         <UserButton />
         <View style={styles.icons}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Notification")}
+            onPress={() => navigation.navigate("SettingsScreen")}
             style={styles.iconButton}
           >
-            <Ionicons name="notifications-outline" size={24} color="black" />
+            <Ionicons name="settings-outline" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate("ProfileScreen")}
