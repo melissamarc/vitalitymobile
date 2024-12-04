@@ -106,6 +106,14 @@ const StepCounterScreen = ({ navigation }: any) => {
     );
   }
 
+  if (isPedometerAvailable === false) {
+    return (
+      <View style={styles.container}>
+        <Text>O pedômetro não está disponível neste dispositivo.</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Cabeçalho */}
