@@ -1,20 +1,31 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+} from "react-native";
 import { firebase } from "../firebaseconfig";
 
-export default function GoalSettingScreen({ navigation }) {
+export default function GoalsScreen({ navigation }) {
   const [stepGoal, setStepGoal] = useState("");
   const [calorieGoal, setCalorieGoal] = useState("");
 
   const saveGoals = () => {
-    const userId = firebase.auth().currentUser.uid;
-
     if (!stepGoal || !calorieGoal) {
       Alert.alert("Erro", "Você deve definir suas metas!");
       return;
     }
 
-    // Atualiza o Firestore com as metas
+    if (isNaN(stepGoal) || isNaN(calorieGoal)) {
+      Alert.alert("Erro", "As metas devem ser números válidos!");
+      return;
+    }
+
+    const userId = firebase.auth().currentUser.uid;
+
     firebase
       .firestore()
       .collection("users")
@@ -25,15 +36,17 @@ export default function GoalSettingScreen({ navigation }) {
       })
       .then(() => {
         Alert.alert("Sucesso", "Metas salvas com sucesso!");
-        navigation.navigate("Dashboard"); // Redireciona para o Dashboard
+        navigation.navigate("Dashboard");
       })
-      .catch((error) => Alert.alert("Erro", error.message));
+      .catch((error) => {
+        const errorMessage = error.message;
+        Alert.alert("Erro", errorMessage);
+      });
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Defina suas metas</Text>
-
+      <Text style={styles.headerText}>Defina suas metas</Text>
       <TextInput
         placeholder="Meta de passos diários"
         keyboardType="numeric"
@@ -62,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  title: {
+  headerText: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
@@ -77,13 +90,13 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: "#7DCD9A",
-    padding: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     borderRadius: 10,
-    width: "100%",
+    alignItems: "center",
   },
   saveButtonText: {
-    fontSize: 18,
     color: "white",
-    textAlign: "center",
+    fontWeight: "bold",
   },
 });

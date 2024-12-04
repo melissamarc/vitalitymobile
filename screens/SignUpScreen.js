@@ -6,30 +6,17 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
-  StatusBar,
-  Modal,
   Image,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { firebase } from "../firebaseconfig"; // Certifique-se de ter configurado corretamente o Firebase
+import { firebase } from "../firebaseconfig";
 
 export default function SignupScreen({ navigation }) {
-  const [fullName, setFullName] = useState("");
+  const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
-  const [dob, setDob] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [gender, setGender] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showGenderOptions, setShowGenderOptions] = useState(false);
-  const [showGoalModal, setShowGoalModal] = useState(false);
-  const [stepGoal, setStepGoal] = useState("");
-  const [calorieGoal, setCalorieGoal] = useState("");
-
-  // Cores dinâmicas
-  const [backgroundColor, setBackgroundColor] = useState("#ffff0");
-  const [inputColor, setInputColor] = useState("#000");
+  const [phone, setPhone] = useState("");
 
   const validatePassword = (password) => {
     const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
@@ -41,15 +28,15 @@ export default function SignupScreen({ navigation }) {
     return regex.test(email);
   };
 
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setDob(selectedDate);
-    }
-  };
-
   const handleSignup = () => {
-    if (!fullName || !username || !dob || !gender || !email || !password || !confirmPassword) {
+    if (
+      !fullname ||
+      !username ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !phone
+    ) {
       Alert.alert("Erro", "Todos os campos devem ser preenchidos!");
       return;
     }
@@ -78,201 +65,88 @@ export default function SignupScreen({ navigation }) {
       .then((userCredential) => {
         const userId = userCredential.user.uid;
 
-        // Salva dados básicos do usuário no Firestore
+        // Salva dados do usuário no Firestore
         firebase.firestore().collection("users").doc(userId).set({
-          fullName,
+          fullname,
           username,
-          dob: dob ? dob.toISOString().split("T")[0] : "",
-          gender,
           email,
+          phone,
         });
 
-        // Exibe modal para definir metas
-        setShowGoalModal(true);
+        navigation.navigate("Metas");
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        Alert.alert("Erro", errorMessage);
-      });
-  };
-
-  const saveGoals = () => {
-    const userId = firebase.auth().currentUser.uid;
-
-    if (!stepGoal || !calorieGoal) {
-      Alert.alert("Erro", "Você deve definir suas metas!");
-      return;
-    }
-
-    // Verificação para garantir que as metas sejam números válidos
-    if (isNaN(stepGoal) || isNaN(calorieGoal)) {
-      Alert.alert("Erro", "As metas devem ser números válidos!");
-      return;
-    }
-
-    // Atualiza o Firestore com as metas
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(userId)
-      .update({
-        stepGoal: parseInt(stepGoal),
-        calorieGoal: parseInt(calorieGoal),
-      })
-      .then(() => {
-        setShowGoalModal(false);
-        Alert.alert("Sucesso", "Metas salvas com sucesso!");
-        navigation.navigate("Dashboard");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
         const errorMessage = error.message;
         Alert.alert("Erro", errorMessage);
       });
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <StatusBar hidden />
-      
-      {/* Imagem do logo */}
+    <View style={styles.container}>
       <Image
-        source={require('../assets/iconhome.png')} // Caminho da imagem do logo
-        style={styles.imagemsingup}
+        source={require("../assets/iconhome.png")} // Adicione o logo de planta
+        style={styles.logo}
       />
-
-      <View style={styles.topSection}>
-        <Text style={styles.headerText}>Criar Conta</Text>
+      <View style={styles.textos}>
+        <Text style={styles.headerText}>Bem-Vindo ao Vitality.</Text>
+        <Text style={styles.subtext}>
+          Cadastre-se e inicie uma jornada mais saudável.
+        </Text>
       </View>
 
-      <View style={styles.boxsingup}>
+      <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Nome completo"
-          value={fullName}
-          onChangeText={setFullName}
-          style={[styles.input, { color: inputColor }]}
-          placeholderTextColor="black"
+          placeholder="Nome Completo"
+          value={fullname}
+          onChangeText={setFullname}
+          style={styles.input}
         />
         <TextInput
-          placeholder="Nome de usuário"
+          placeholder="Nome de Usuário"
           value={username}
           onChangeText={setUsername}
-          style={[styles.input, { color: inputColor }]}
-          placeholderTextColor="black"
+          style={styles.input}
         />
-
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={[styles.input, { color: inputColor }]}>
-          <Text style={{ color: dob ? "black" : "#888" }}>
-            {dob ? dob.toLocaleDateString() : "Data de nascimento"}
-          </Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={dob || new Date()}
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
-
-        {/* Campo de seleção de gênero */}
-        <TouchableOpacity
-          style={[styles.input, { color: inputColor }]}
-          onPress={() => setShowGenderOptions(!showGenderOptions)}
-        >
-          <Text style={{ color: gender ? "black" : "#888" }}>
-            {gender || "Selecione o gênero"}
-          </Text>
-        </TouchableOpacity>
-
-        {/* Drop-down para gênero */}
-        {showGenderOptions && (
-          <View style={styles.genderOptions}>
-            <TouchableOpacity
-              style={styles.genderOption}
-              onPress={() => { setGender("Feminino"); setShowGenderOptions(false); }}
-            >
-              <Text style={styles.genderOptionText}>Feminino</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.genderOption}
-              onPress={() => { setGender("Masculino"); setShowGenderOptions(false); }}
-            >
-              <Text style={styles.genderOptionText}>Masculino</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.genderOption}
-              onPress={() => { setGender("Prefiro não dizer"); setShowGenderOptions(false); }}
-            >
-              <Text style={styles.genderOptionText}>Prefiro não dizer</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
+        <TextInput
+          placeholder="Telefone"
+          value={phone}
+          onChangeText={setPhone}
+          style={styles.input}
+          keyboardType="phone-pad"
+        />
         <TextInput
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
-          style={[styles.input, { color: inputColor }]}
+          style={styles.input}
           keyboardType="email-address"
-          placeholderTextColor="black"
         />
         <TextInput
           placeholder="Senha"
           value={password}
           onChangeText={setPassword}
-          style={[styles.input, { color: inputColor }]}
+          style={styles.input}
           secureTextEntry
-          placeholderTextColor="black"
         />
         <TextInput
-          placeholder="Confirmar senha"
+          placeholder="Confirmar Senha"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
-          style={[styles.input, { color: inputColor }]}
+          style={styles.input}
           secureTextEntry
-          placeholderTextColor="black"
         />
 
         <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
           <Text style={styles.signupButtonText}>Cadastrar</Text>
         </TouchableOpacity>
-      </View>
 
-      {/* Modal para definir metas */}
-      <Modal visible={showGoalModal} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Defina suas metas</Text>
-            <TextInput
-              placeholder="Meta de passos diários"
-              keyboardType="numeric"
-              value={stepGoal}
-              onChangeText={setStepGoal}
-              style={[styles.input, { color: inputColor }]}
-            />
-            <TextInput
-              placeholder="Meta de calorias diárias"
-              keyboardType="numeric"
-              value={calorieGoal}
-              onChangeText={setCalorieGoal}
-              style={[styles.input, { color: inputColor }]}
-            />
-            <View style={styles.modalButtonContainer}>
-              <TouchableOpacity style={styles.signupButton} onPress={saveGoals}>
-                <Text style={styles.signupButtonText}>Salvar Metas</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.signupButton}
-                onPress={() => setShowGoalModal(false)}
-              >
-                <Text style={styles.signupButtonText}>Fechar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        <View style={styles.signUpSection}>
+          <Text>Já tem uma conta? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.signUpText}>Entrar</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </View>
     </View>
   );
 }
@@ -280,43 +154,23 @@ export default function SignupScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  imagemsingup: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginTop: 30,
-  },
-  topSection: {
-  marginTop: 5,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-    marginTop: 5,
-  },
-  boxsingup: {
-    width: "90%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
+
     alignItems: "center",
-    marginTop: 10,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    marginTop: 50,
   },
-  input: {
+  signUpSection: {
+    flexDirection: "row",
     width: "100%",
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 10,
-    marginBottom: 15,
-    color: "#000",
+    marginTop: 15,
+    justifyContent: "center",
   },
+  signUpText: {
+    color: "#7DCD9A",
+    fontWeight: "bold",
+  },
+
   signupButton: {
     backgroundColor: "#7DCD9A",
     paddingVertical: 12,
@@ -328,59 +182,63 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: "white",
     fontWeight: "bold",
-  },
-  genderOptions: {
-    width: "100%",
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 5,
-  },
-  genderOption: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  genderOptionText: {
-    color: "black",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    width: "80%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
-
-  },
-  modalTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 20,
   },
-  modalButtonContainer: {
+  orText: {
+    marginVertical: 10,
+    color: "#888",
+  },
+  socialButtons: {
     flexDirection: "row",
     justifyContent: "center",
-    width: "46%",
+    width: "60%",
+  },
+  socialButton: {
+    backgroundColor: "#EEE",
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
   },
 
-  saveButton: {
-    backgroundColor: "#7DCD9A",
-    padding: 15,
-    borderRadius: 10,
-    width: "46%",  // Ajusta a largura dos botões
+  textos: {
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+    marginBottom: 20,
   },
-  saveButtonText: {
+
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "black",
+  },
+  subtext: {
     fontSize: 18,
-    color: "white",
-    textAlign: "center",
+  },
+  inputContainer: {
+    width: "100%",
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 10,
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 18,
   },
 });

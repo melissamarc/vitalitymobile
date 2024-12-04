@@ -15,11 +15,6 @@ import { Ionicons } from "@expo/vector-icons";
 export default function RecipeScreen() {
   const navigation = useNavigation();
 
-  const carouselData = [
-    { id: "1", image: "https://via.placeholder.com/300x150.png?text=Oferta+1" },
-    { id: "2", image: "https://via.placeholder.com/300x150.png?text=Oferta+2" },
-  ];
-
   const categories = ["Café da Manhã", "Almoço", "Janta"];
 
   const allRecipes = [
