@@ -6,15 +6,15 @@ import {
   Dimensions,
   TouchableOpacity,
   ActivityIndicator,
-  Image
+  Image,
 } from "react-native";
 import { Pedometer } from "expo-sensors";
 import { Ionicons } from "@expo/vector-icons";
 import { firebase } from "../firebaseconfig";
-import UserButton from './components/UserButton';
+import UserButton from "./components/UserButton";
 import { LineChart } from "react-native-svg-charts";
-import FootImage from '../assets/pe.png';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import FootImage from "../assets/pe.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StepCounterScreen = ({ navigation }: any) => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState(null);
@@ -61,8 +61,8 @@ const StepCounterScreen = ({ navigation }: any) => {
   // Carregar dados do AsyncStorage
   useEffect(() => {
     const loadData = async () => {
-      const storedSteps = await AsyncStorage.getItem('steps');
-      const storedCalories = await AsyncStorage.getItem('caloriesBurned');
+      const storedSteps = await AsyncStorage.getItem("steps");
+      const storedCalories = await AsyncStorage.getItem("caloriesBurned");
       if (storedSteps) {
         setSteps(Number(storedSteps));
       }
@@ -76,8 +76,8 @@ const StepCounterScreen = ({ navigation }: any) => {
   // Salvar passos e calorias no AsyncStorage
   useEffect(() => {
     const saveData = async () => {
-      await AsyncStorage.setItem('steps', String(steps));
-      await AsyncStorage.setItem('caloriesBurned', String(caloriesBurned));
+      await AsyncStorage.setItem("steps", String(steps));
+      await AsyncStorage.setItem("caloriesBurned", String(caloriesBurned));
     };
     saveData();
   }, [steps, caloriesBurned]);
@@ -140,7 +140,9 @@ const StepCounterScreen = ({ navigation }: any) => {
         <View style={styles.textContainer}>
           <Text style={styles.metricValue}>{steps}</Text>
           <Text style={styles.metricLabel}>Passos</Text>
-          <Text style={styles.metricValue}>{caloriesBurned.toFixed(1)} kcal</Text>
+          <Text style={styles.metricValue}>
+            {caloriesBurned.toFixed(1)} kcal
+          </Text>
           <Text style={styles.metricLabel}>Calorias</Text>
         </View>
         <View style={styles.imageContainer}>
@@ -151,12 +153,12 @@ const StepCounterScreen = ({ navigation }: any) => {
       {/* Informações Adicionais em Cartões */}
       <View style={styles.cardRow}>
         <View style={styles.infoCard}>
-          <Text style={styles.cardTitle}>Calorias diárias</Text>
+          <Text style={styles.cardTitle}>Calorias{"\n"}diárias</Text>
           <Text style={styles.cardValue}>{caloriesBurned.toFixed(1)} kcal</Text>
           <Text style={styles.cardMeta}>Meta: {calorieGoal} kcal</Text>
         </View>
         <View style={styles.infoCard}>
-          <Text style={styles.cardTitle}>Passos</Text>
+          <Text style={styles.cardTitle}>Passos{"\n"}diários</Text>
           <Text style={styles.cardValue}>{steps}</Text>
           <Text style={styles.cardMeta}>Meta: {stepGoal}</Text>
         </View>
@@ -179,7 +181,7 @@ const StepCounterScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   loadingContainer: {
     flex: 1,
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
   },
   progressCard: {
     flexDirection: "row",
-    backgroundColor: "#7dcd9a",
+    backgroundColor: "#4CAF50",
     padding: 25,
     borderRadius: 20,
     marginTop: 15,
@@ -221,7 +223,7 @@ const styles = StyleSheet.create({
   imageStyle: {
     marginLeft: 20,
     width: 150,
-    height: 150
+    height: 150,
   },
   metricValue: {
     fontSize: 32,
@@ -237,7 +239,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
-    marginTop: 20
+    marginTop: 20,
   },
   infoCard: {
     flex: 1,
@@ -245,7 +247,9 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 5,
     borderRadius: 12,
-    height: 200,
+    height: 160,
+    flexDirection: "column",
+    justifyContent: "space-between",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -253,18 +257,18 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 5,
     color: "#333",
   },
   cardValue: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: "bold",
     color: "#7dcd9a",
   },
   cardMeta: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#777",
   },
   graphContainer: {
@@ -275,14 +279,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 5,
+    elevation: 2,
   },
   graphTitle: {
     marginTop: 10,
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 20,
     color: "#333",
-  }
+  },
 });
 
 export default StepCounterScreen;
