@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#d69',
     borderRadius: 12,
     justifyContent: 'space-between',
-   
+    height: 250,
+    width: '100%',
     marginVertical: 10,
   },
   chartContainer: {

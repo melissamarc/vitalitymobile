@@ -43,12 +43,12 @@ const FloatingMenu = ({ isOpen, onSelect }) => {
   return (
     <Animated.View style={[styles.floatingMenu, { transform: [{ translateY }] }]}>
       <TouchableOpacity style={styles.menuItem} onPress={() => onSelect('FoodScreen')}>
-        <MaterialIcons name="restaurant" size={24} color="#007AFF" />
-        <Text>Refeições</Text>
+        <MaterialIcons name="restaurant" size={30} color="#000" />
+        <Text> Adicionar Refeição </Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuItem} onPress={() => onSelect('WaterScreen')}>
-        <FontAwesome5 name="tint" size={24} color="#007AFF" />
-        <Text>Contador de Água</Text>
+        <FontAwesome5 name="tint" size={30} color="#000" />
+        <Text>Adicionar Água Consumida</Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -142,12 +142,15 @@ const styles = StyleSheet.create({
     bottom: 80,
     alignSelf: 'center',
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 50,
     padding: 10,
-    elevation: 5,
+    elevation: 20,
+    height: 150,
+    width: 200,
+ fontSize: 16,
   },
   menuItem: {
-    flexDirection: 'row',
+   
     alignItems: 'center',
     marginVertical: 10,
   },

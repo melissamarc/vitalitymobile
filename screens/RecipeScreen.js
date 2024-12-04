@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Swiper from 'react-native-swiper';
 import UserButton from './components/UserButton';
 import { Ionicons } from "@expo/vector-icons";
-import Swiper from 'react-native-swiper'
 
 
 export default function RecipeScreen() {
@@ -14,29 +14,90 @@ export default function RecipeScreen() {
     { id: '2', image: 'https://via.placeholder.com/300x150.png?text=Oferta+2' },
   ];
 
-
-
-
-
-  // Dados das categorias
   const categories = ['Café da Manhã', 'Almoço', 'Lanche', 'Janta'];
 
-  // Dados de todas as receitas
   const allRecipes = [
-    { id: '1', name: 'Salada Caesar', calories: '150 kcal', time: '20 min', category: 'Café da Manhã', image: 'https://via.placeholder.com/100.png?text=Salada' },
-    { id: '2', name: 'Frango Grelhado', calories: '250 kcal', time: '30 min', category: 'Almoço', image: 'https://via.placeholder.com/100.png?text=Frango' },
-    { id: '3', name: 'Torta de Maçã', calories: '200 kcal', time: '40 min', category: 'Lanche', image: 'https://via.placeholder.com/100.png?text=Torta' },
-    { id: '4', name: 'Sopa de Legumes', calories: '100 kcal', time: '25 min', category: 'Janta', image: 'https://via.placeholder.com/100.png?text=Sopa' },
-    // Adicione mais receitas aqui...
+    {
+      id: '1',
+      name: 'Iogurte com Frutas e Granola',
+      calories: '200 kcal',
+      time: '5 min',
+      category: 'Café da Manhã',
+      image: require('../assets/recipes/iogurte.jpg'),
+      preparation: [
+        'Coloque o iogurte em uma tigela.',
+        'Adicione o mel e misture bem.',
+        'Acrescente a granola e as frutas por cima.',
+        'Sirva imediatamente.',
+      ],
+    },
+    {
+      id: '2',
+      name: 'Omelete de Legumes',
+      calories: '150 kcal',
+      time: '15 min',
+      category: 'Café da Manhã',
+      image: 'https://via.placeholder.com/100.png?text=Omelete',
+      preparation: [
+        'Bata os ovos em uma tigela e tempere com sal e pimenta.',
+        'Aqueça o azeite em uma frigideira antiaderente.',
+        'Refogue a cebola, pimentão e tomate por alguns minutos.',
+        'Adicione o espinafre e refogue até murchar.',
+        'Despeje os ovos batidos na frigideira e cozinhe até a omelete estar firme.',
+        'Dobre a omelete ao meio e sirva.',
+      ],
+    },
+    {
+      id: '3',
+      name: 'Smoothie Verde',
+      calories: '100 kcal',
+      time: '5 min',
+      category: 'Café da Manhã',
+      image: 'https://via.placeholder.com/100.png?text=Smoothie',
+      preparation: [
+        'Coloque todos os ingredientes no liquidificador.',
+        'Bata até obter uma mistura homogênea.',
+        'Sirva imediatamente.',
+      ],
+    },
+    {
+      id: '4',
+      name: 'Aveia Overnight',
+      calories: '180 kcal',
+      time: '10 min',
+      category: 'Café da Manhã',
+      image: 'https://via.placeholder.com/100.png?text=Aveia',
+      preparation: [
+        'Em um recipiente, misture a aveia, leite vegetal, chia e mel.',
+        'Tampe e leve à geladeira durante a noite.',
+        'Pela manhã, adicione as frutas frescas por cima.',
+        'Sirva frio.',
+      ],
+    },
+    {
+      id: '5',
+      name: 'Panqueca de Banana e Aveia',
+      calories: '250 kcal',
+      time: '20 min',
+      category: 'Café da Manhã',
+      image: 'https://via.placeholder.com/100.png?text=Panqueca',
+      preparation: [
+        'Amasse a banana em uma tigela.',
+        'Adicione os ovos e misture bem.',
+        'Acrescente a aveia, canela e fermento, misturando até formar uma massa homogênea.',
+        'Aqueça uma frigideira antiaderente e despeje pequenas porções da massa.',
+        'Cozinhe até as panquecas dourarem dos dois lados.',
+        'Sirva com mel e frutas.',
+      ],
+    },
   ];
 
-  // Estado da categoria ativa e receitas filtradas
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const filteredRecipes = selectedCategory === 'Todas' ? allRecipes : allRecipes.filter((recipe) => recipe.category === selectedCategory);
 
   return (
     <View style={styles.container}>
-          <View style={styles.header}>
+       <View style={styles.header}>
         <UserButton />
         <View style={styles.icons}>
           <TouchableOpacity
@@ -53,8 +114,6 @@ export default function RecipeScreen() {
           </TouchableOpacity>
         </View>
       </View>
-
-   {/* Carrossel */}
       <View style={styles.carouselContainer}>
         <Swiper autoplay autoplayTimeout={3} showsPagination>
           {carouselData.map((item) => (
@@ -63,10 +122,6 @@ export default function RecipeScreen() {
         </Swiper>
       </View>
 
-
-
-
-      {/* Categorias */}
       <Text style={styles.sectionTitle}>Categorias</Text>
       <FlatList
         data={['Todas', ...categories]}
@@ -83,7 +138,6 @@ export default function RecipeScreen() {
         style={styles.categoryList}
       />
 
-      {/* Receitas Recomendadas */}
       <Text style={styles.sectionTitle}>Recomendadas</Text>
       <FlatList
         data={filteredRecipes}
@@ -110,7 +164,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
-    header: {
+
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -125,8 +180,8 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 10,
   },
-
-    carouselContainer: {
+ 
+  carouselContainer: {
     height: 220,
     marginVertical: 10,
   },
@@ -135,7 +190,6 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 10,
   },
-
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -148,14 +202,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#0001',
     borderRadius: 20,
     padding: 10,
+    height: 45,
+    alignItems: 'center',
     marginRight: 10,
-    justifyContent: 'space-around'
   },
   categoryItemActive: {
     backgroundColor: '#4CAF50',
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
   },
   categoryTextActive: {

@@ -1,32 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   Modal,
-} from 'react-native';
-import MapView, { Polyline } from 'react-native-maps';
-import * as Location from 'expo-location';
-import { Pedometer } from 'expo-sensors';
+} from "react-native";
+import MapView, { Polyline } from "react-native-maps";
+import * as Location from "expo-location";
+import { Pedometer } from "expo-sensors";
 
 export default function Caminhada() {
   const [location, setLocation] = useState(null);
   const [route, setRoute] = useState([]); // Rota percorrida
   const [steps, setSteps] = useState(0); // Contador de passos
-  const [isPedometerAvailable, setIsPedometerAvailable] = useState(null);
   const [calorias, setCalorias] = useState(0);
   const [distancia, setDistancia] = useState(0);
   const [tempo, setTempo] = useState(0);
   const [ativo, setAtivo] = useState(false);
   const [mapaExpandido, setMapaExpandido] = useState(false);
+  const [exercicioFinalizado, setExercicioFinalizado] = useState(false);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Permissão de localização negada!');
+      if (status !== "granted") {
+        alert("Permissão de localização negada!");
         return;
       }
 
@@ -83,22 +82,11 @@ export default function Caminhada() {
 
   const finalizarExercicio = () => {
     setAtivo(false);
-    alert(
-      `Exercício finalizado!\nPassos: ${steps}\nDistância: ${distancia.toFixed(
-        2
-      )} km\nCalorias: ${calorias.toFixed(2)} kcal`
-    );
-    setSteps(0);
-    setTempo(0);
-    setCalorias(0);
-    setDistancia(0);
-    setRoute([]);
+    setExercicioFinalizado(true);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Caminhada</Text>
-
       <TouchableOpacity onPress={() => setMapaExpandido(true)}>
         <MapView
           style={styles.map}
@@ -116,7 +104,11 @@ export default function Caminhada() {
           followsUserLocation
         >
           {route.length > 0 && (
-            <Polyline coordinates={route} strokeWidth={4} strokeColor="#0EAB6E" />
+            <Polyline
+              coordinates={route}
+              strokeWidth={4}
+              strokeColor="#0EAB6E"
+            />
           )}
         </MapView>
       </TouchableOpacity>
@@ -142,12 +134,18 @@ export default function Caminhada() {
 
       <View style={styles.buttonsContainer}>
         {!ativo && (
-          <TouchableOpacity style={styles.button} onPress={() => setAtivo(true)}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setAtivo(true)}
+          >
             <Text style={styles.buttonText}>Iniciar</Text>
           </TouchableOpacity>
         )}
         {ativo && (
-          <TouchableOpacity style={styles.button} onPress={() => setAtivo(false)}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setAtivo(false)}
+          >
             <Text style={styles.buttonText}>Pausar</Text>
           </TouchableOpacity>
         )}
@@ -157,6 +155,32 @@ export default function Caminhada() {
           </TouchableOpacity>
         )}
       </View>
+
+      {exercicioFinalizado && (
+        <View style={styles.resultadosContainer}>
+          <Text style={styles.resultadosTitle}>Resultados</Text>
+          <View style={styles.resultadoBox}>
+            <Text style={styles.resultadoLabel}>Passos:</Text>
+            <Text style={styles.resultadoValue}>{steps}</Text>
+          </View>
+          <View style={styles.resultadoBox}>
+            <Text style={styles.resultadoLabel}>Distância:</Text>
+            <Text style={styles.resultadoValue}>
+              {distancia.toFixed(2)} km
+            </Text>
+          </View>
+          <View style={styles.resultadoBox}>
+            <Text style={styles.resultadoLabel}>Calorias:</Text>
+            <Text style={styles.resultadoValue}>
+              {calorias.toFixed(2)} kcal
+            </Text>
+          </View>
+          <View style={styles.resultadoBox}>
+            <Text style={styles.resultadoLabel}>Tempo:</Text>
+            <Text style={styles.resultadoValue}>{tempo}s</Text>
+          </View>
+        </View>
+      )}
 
       <Modal visible={mapaExpandido} animationType="slide">
         <MapView
@@ -175,7 +199,11 @@ export default function Caminhada() {
           followsUserLocation
         >
           {route.length > 0 && (
-            <Polyline coordinates={route} strokeWidth={4} strokeColor="#0EAB6E" />
+            <Polyline
+              coordinates={route}
+              strokeWidth={4}
+              strokeColor="#0EAB6E"
+            />
           )}
         </MapView>
         <TouchableOpacity
@@ -190,17 +218,85 @@ export default function Caminhada() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  map: { height: Dimensions.get('window').height / 3, borderRadius: 10 },
-  statsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
-  statBox: { alignItems: 'center' },
-  statValue: { fontSize: 20, fontWeight: 'bold' },
-  statLabel: { fontSize: 14, color: '#555' },
-  buttonsContainer: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 },
-  button: { backgroundColor: '#0EAB6E', padding: 15, borderRadius: 10 },
-  buttonText: { color: '#fff', fontSize: 16 },
-  closeButton: { position: 'absolute', bottom: 30, alignSelf: 'center', backgroundColor: '#0EAB6E', padding: 10, borderRadius: 10 },
-  closeButtonText: { color: '#fff', fontSize: 16 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 10
+  },
+  map: {
+    paddingBottom: 0,
+    width: "100%",
+    height: "65%",  // Ajustei para 70% da altura da tela
+  
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,  // Adicionei padding para dar mais espaço
+  },
+  statBox: {
+    width: "22%",
+    height: 100,
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    padding: 10,
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  statLabel: {
+    fontSize: 14,
+    color: "#555",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: "#0EAB6E",
+    padding: 15,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  closeButton: {
+    position: "absolute",
+    bottom: 30,
+    alignSelf: "center",
+    backgroundColor: "#0EAB6E",
+    padding: 10,
+    borderRadius: 10,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  resultadosContainer: {
+    marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  resultadosTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  resultadoBox: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  resultadoLabel: {
+    fontSize: 16,
+    color: "#555",
+  },
+  resultadoValue: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
-

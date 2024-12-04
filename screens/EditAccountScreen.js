@@ -4,9 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EditAccountScreen = ({ navigation }) => {
   const avatars = [
-    require('../assets/avatar1.png'),
-    require('../assets/avatar2.png'),
-    require('../assets/avatar3.png'),
+    require('../assets/avatares/avatar1.png'),
+    require('../assets/avatares/avatar2.png'),
+    require('../assets/avatares/avatar3.png'),
   ];
 
   const handleAvatarSelect = async (selectedAvatar) => {

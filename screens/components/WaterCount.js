@@ -29,13 +29,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row'
+    
   },
   box: {
     padding: 20,
     height: 200,
     width: 158,
-    
+    flexDirection: 'row',
    
     borderRadius: 10,
     alignItems: 'center',

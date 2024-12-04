@@ -7,10 +7,10 @@ import {
   Alert,
   StyleSheet,
   StatusBar,
-  FlatList,
-  Image,
+  Modal,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
 import { firebase } from "../firebaseconfig";
 
 export default function SignupScreen({ navigation }) {
@@ -19,20 +19,14 @@ export default function SignupScreen({ navigation }) {
   const [dob, setDob] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [gender, setGender] = useState("");
-  const [showGenderDropdown, setShowGenderDropdown] = useState(false); // Controle do dropdown
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Para metas
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [stepGoal, setStepGoal] = useState("");
   const [calorieGoal, setCalorieGoal] = useState("");
-
-  const genderOptions = [
-    { label: "Masculino", value: "masculino" },
-    { label: "Feminino", value: "feminino" },
-    { label: "Prefiro não dizer", value: "naoDizer" },
-  ];
 
   const validatePassword = (password) => {
     const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
@@ -71,6 +65,7 @@ export default function SignupScreen({ navigation }) {
       .then((userCredential) => {
         const userId = userCredential.user.uid;
 
+        // Salva dados básicos do usuário
         firebase.firestore().collection("users").doc(userId).set({
           fullName,
           username,
@@ -79,6 +74,7 @@ export default function SignupScreen({ navigation }) {
           email,
         });
 
+        // Exibe modal para definir metas
         setShowGoalModal(true);
       })
       .catch((error) => Alert.alert("Erro", error.message));
@@ -92,6 +88,7 @@ export default function SignupScreen({ navigation }) {
       return;
     }
 
+    // Atualiza o Firestore com as metas
     firebase
       .firestore()
       .collection("users")
@@ -112,13 +109,10 @@ export default function SignupScreen({ navigation }) {
     <View style={styles.container}>
       <StatusBar hidden />
 
-      {/* Top Section com a imagem e o texto */}
       <View style={styles.topSection}>
-        <Image source={require("../assets/iconhome.png")} style={styles.logo} />
         <Text style={styles.headerText}>Criar Conta</Text>
       </View>
 
-      {/* Formulário */}
       <View style={styles.form}>
         <TextInput
           placeholder="Nome completo"
@@ -149,37 +143,18 @@ export default function SignupScreen({ navigation }) {
           />
         )}
 
-        {/* Drop-down para gênero */}
-        <TouchableOpacity
-          onPress={() => setShowGenderDropdown((prev) => !prev)} // Abre/fecha o drop-down
-          style={[styles.input, styles.dropdownInput]}
-        >
-          <Text style={{ color: gender ? "black" : "#888" }}>
-            {gender
-              ? genderOptions.find((option) => option.value === gender)?.label
-              : "Selecione o gênero"}
-          </Text>
-        </TouchableOpacity>
-
-        {showGenderDropdown && (
-          <View style={styles.dropdownContainer}>
-            <FlatList
-              data={genderOptions}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.dropdownItem}
-                  onPress={() => {
-                    setGender(item.value); // Define o gênero selecionado
-                    setShowGenderDropdown(false); // Fecha o drop-down
-                  }}
-                >
-                  <Text style={styles.dropdownItemText}>{item.label}</Text>
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-        )}
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={gender}
+            onValueChange={(itemValue) => setGender(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Selecione o gênero" value="" />
+            <Picker.Item label="Feminino" value="feminino" />
+            <Picker.Item label="Masculino" value="masculino" />
+            <Picker.Item label="Prefiro não dizer" value="naoDizer" />
+          </Picker>
+        </View>
 
         <TextInput
           placeholder="Email"
@@ -210,83 +185,43 @@ export default function SignupScreen({ navigation }) {
           <Text style={styles.signupButtonText}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Modal para definir metas */}
+      <Modal visible={showGoalModal} transparent animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Defina suas metas</Text>
+            <TextInput
+              placeholder="Meta de passos diários"
+              keyboardType="numeric"
+              value={stepGoal}
+              onChangeText={setStepGoal}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Meta de calorias diárias"
+              keyboardType="numeric"
+              value={calorieGoal}
+              onChangeText={setCalorieGoal}
+              style={styles.input}
+            />
+            <TouchableOpacity style={styles.signupButton} onPress={saveGoals}>
+              <Text style={styles.signupButtonText}>Salvar Metas</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-start",
-    padding: 20,
-    backgroundColor: "#ffff0",
-    paddingTop: 80,
-  },
-  topSection: {
-    paddingTop: 20, // Reduzido para mover o logo mais próximo ao topo
-    paddingBottom: 20,
-    alignItems: "center",
-    marginTop: 20, // Reduzido para aproximar ainda mais o logo ao topo
-  },
-  logo: {
-    width: 100, // Largura da imagem
-    height: 100, // Altura da imagem
-    resizeMode: "contain",
-    marginBottom: 10, // Espaço entre a imagem e o texto "Criar Conta"
-  },
-  headerText: {
-    fontSize: 30,
-    color: "black",
-    fontWeight: "bold",
-  },
-  form: {
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 20,
-    alignItems: "center",
-    marginTop: 20, // Adicione ou aumente este valor para mover o formulário mais para baixo
-  },
-  input: {
-    width: "100%",
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  signupButton: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: "#7DCD9A",
-    borderRadius: 10,
-    alignItems: "center",
-    width: "100%",
-  },
-  signupButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  dropdownInput: {
-    position: "relative",
-  },
-  dropdownContainer: {
-    position: "absolute",
-    top: 65,
-    width: "100%",
-    backgroundColor: "#FFF",
-    borderWidth: 1,
-    borderColor: "#DDD",
-    borderRadius: 10,
-    zIndex: 10,
-  },
-  dropdownItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#DDD",
-  },
-  dropdownItemText: {
-    color: "#333",
-  },
+  container: { flex: 1, alignItems: "center", backgroundColor: "#FFF" },
+  form: { width: "90%" },
+  input: { marginBottom: 15, padding: 10, borderWidth: 1, borderColor: "#DDD", borderRadius: 5 },
+  signupButton: { padding: 15, backgroundColor: "#4CAF50", borderRadius: 5, alignItems: "center" },
+  signupButtonText: { color: "#FFF", fontWeight: "bold" },
+  modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
+  modalContent: { backgroundColor: "#FFF", padding: 20, borderRadius: 10, width: "80%" },
+  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 20 },
 });

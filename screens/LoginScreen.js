@@ -7,10 +7,27 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Função de login
   const handleLogin = () => {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => navigation.navigate('Dashboard'))
       .catch(error => Alert.alert(error.message));
+  };
+
+  // Função para enviar e-mail de redefinição de senha
+  const handlePasswordReset = () => {
+    if (!email) {
+      Alert.alert('Por favor, insira seu e-mail.');
+      return;
+    }
+
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        Alert.alert('E-mail de redefinição enviado!', 'Verifique sua caixa de entrada.');
+      })
+      .catch((error) => {
+        Alert.alert('Erro ao enviar e-mail', error.message);
+      });
   };
 
   return (
@@ -62,6 +79,11 @@ export default function LoginScreen({ navigation }) {
             <Text style={styles.signUpText}>Cadastre-se</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Botão para redefinir senha */}
+        <TouchableOpacity onPress={handlePasswordReset} style={styles.resetButton}>
+          <Text style={styles.resetButtonText}>Esqueceu a senha?</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -79,22 +101,22 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 75,
-    marginBottom: 20,  // Ajustei o espaçamento entre a imagem e o texto abaixo dela
+    marginBottom: 20,
   },
   
   titleText: {
-    fontSize: 24,      // Tamanho da fonte do título
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,     // Espaço entre a imagem e o título
+    marginBottom: 10,
     textAlign: 'center',
     marginTop: 10,
   },
 
   paragraphText: {
-    fontSize: 18,      // Tamanho da fonte do parágrafo
+    fontSize: 18,
     fontWeight: '400',
-    color: '#555',     // Cor do texto do parágrafo
-    marginBottom: 40,      // Reduzi o espaço entre o título e o parágrafo para aproximá-los
+    color: '#555',
+    marginBottom: 40,
     marginTop: 10,
     textAlign: 'center',
   },
@@ -116,7 +138,7 @@ const styles = StyleSheet.create({
     color: '#000'
   },
   loginButton: {
-    backgroundColor: '#7DCD9A', 
+    backgroundColor: '#7DCD9A',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -150,4 +172,12 @@ const styles = StyleSheet.create({
     color: '#7DCD9A',
     fontWeight: 'bold',
   },
+  // Estilos para o botão de redefinir senha
+  resetButton: {
+    marginTop: 20,
+  },
+  resetButtonText: {
+    color: '#7DCD9A',
+    fontWeight: 'bold',
+  }
 });
