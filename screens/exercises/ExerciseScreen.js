@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,50 +6,41 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import UserButton from '../components/UserButton';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import UserButton from "../components/UserButton";
 import { Ionicons } from "@expo/vector-icons";
-
 
 export default function Exercicio() {
   const navigation = useNavigation();
 
-  // Dados dos exercícios sugeridos
-  const suggestedWorkouts = [
-    { id: 1, name: 'Yoga', icon: require('../../assets/gym.png') },
-    { id: 2, name: 'Weightlifting', icon: require('../../assets/corrida.png') },
-    { id: 3, name: 'Cycling', icon: require('../../assets/corrida.png') },
-  ];
-
-  // Dados dos exercícios "Trending"
   const exercises = [
     {
       id: 1,
-      name: 'Caminhada',
-      description: 'Ande ao ar livre e aproveite a natureza.',
+      name: "Caminhada",
+      description: "Ande ao ar livre e aproveite a natureza.",
       calories: 200,
-      image: require('../../assets/corrida.png'),
+      image: require("../../assets/corrida.png"),
     },
     {
       id: 2,
-      name: 'Corrida',
-      description: 'Melhore seu condicionamento físico correndo.',
+      name: "Corrida",
+      description: "Melhore seu condicionamento físico correndo.",
       calories: 400,
-      image: require('../../assets/corrida.png'),
+      image: require("../../assets/corrida.png"),
     },
     {
       id: 3,
-      name: 'Musculacao',
-      description: 'Ganhe força e tonifique seus músculos.',
-      calories: 300,
-      image: require('../../assets/corrida.png'),
+      name: "Musculacao",
+      description: "Melhore seu condicionamento físico correndo.",
+      calories: 400,
+      image: require("../../assets/corrida.png"),
     },
   ];
 
   return (
     <ScrollView style={styles.container}>
-     <View style={styles.header}>
+      <View style={styles.header}>
         <UserButton />
         <View style={styles.icons}>
           <TouchableOpacity
@@ -67,37 +58,41 @@ export default function Exercicio() {
         </View>
       </View>
 
-      {/* Workouts sugeridos */}
-      <View>
-        <Text style={styles.sectionTitle}>Sugestões</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestions}>
-          {suggestedWorkouts.map((workout) => (
-            <View key={workout.id} style={styles.suggestionCard}>
-              <Image source={workout.icon} style={styles.suggestionImage} />
-              <Text style={styles.suggestionText}>{workout.name}</Text>
-            </View>
-          ))}
-        </ScrollView>
+      {/* Novo cabeçalho estilizado */}
+      <View style={styles.customHeader}>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>Vamos se {"\n"}movimentar!</Text>
+          <Text style={styles.subtitle}>
+            Escolha um exercício e comece agora.
+          </Text>
+        </View>
+        <View style={styles.imageWrapper}>
+          <Image
+            source={require("../../assets/gym.png")} // Substitua pelo caminho correto
+            style={styles.image}
+          />
+        </View>
       </View>
 
       {/* Exercícios em destaque */}
-      <View>
-        <Text style={styles.sectionTitle}>Em alta 🔥</Text>
-        {exercises.map((exercise) => (
-          <TouchableOpacity
-            key={exercise.id}
-            style={styles.exerciseCard}
-            onPress={() => navigation.navigate(exercise.name)}
-          >
-            <Image source={exercise.image} style={styles.exerciseImage} />
-            <View style={styles.cardContent}>
-              <Text style={styles.exerciseTitle}>{exercise.name}</Text>
-              <Text style={styles.exerciseDescription}>{exercise.description}</Text>
-              <Text style={styles.caloriesText}>🔥 {exercise.calories} Kcal</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <Text style={styles.sectionTitle}>Em alta 🔥</Text>
+      {exercises.map((exercise) => (
+        <TouchableOpacity
+          key={exercise.id}
+          style={styles.exerciseCard}
+          onPress={() => navigation.navigate(exercise.name)}
+        >
+          <View style={styles.cardContent}>
+            <Text style={styles.exerciseTitle}>{exercise.name}</Text>
+            <Text style={styles.exerciseDescription}>
+              {exercise.description}
+            </Text>
+            <Text style={styles.caloriesText}>🔥 {exercise.calories} Kcal</Text>
+          </View>
+          {/* Imagem do exercício posicionada à direita */}
+          <Image source={exercise.image} style={styles.exerciseImage} />
+        </TouchableOpacity>
+      ))}
     </ScrollView>
   );
 }
@@ -105,11 +100,10 @@ export default function Exercicio() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    paddingHorizontal: 10
-   
+    backgroundColor: "#F5F5F5",
+    paddingHorizontal: 10,
   },
-   header: {
+  header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -124,79 +118,94 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 10,
   },
- 
+  // Novo cabeçalho estilizado
+  customHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#4CAF50",
+    borderRadius: 20,
+    padding: 20,
+    marginVertical: 20,
+    height: 170,
+    overflow: "hidden",
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#E0E0E0",
+    marginTop: 5,
+  },
+  imageWrapper: {
+    position: "absolute",
+    right: -50, // Move a imagem para fora da borda
+    bottom: -20,
+    width: 200,
+    height: 200,
+    overflow: "hidden",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+    transform: [{ rotate: "-19deg" }], // Inclina a imagem
+  },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 15,
-    paddingLeft: 12
-  },
-  suggestions: {
-    flexDirection: 'row',
-  },
-  suggestionCard: {
-    backgroundColor: '#fff',
-    borderRadius: 50,
-    padding: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 15,
-    width: 95,
-    height: 95,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-    marginBottom: 20
-  },
-  suggestionImage: {
-    width: 40,
-    height: 40,
-    marginBottom: 5,
-  },
-  suggestionText: {
-    fontSize: 12,
-    color: '#555',
-    textAlign: 'center',
+    paddingLeft: 12,
   },
   exerciseCard: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    backgroundColor: "#fff",
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
-    height: 140
+    height: 150,
+    alignItems: "center", // Alinha o conteúdo dentro do card
   },
   exerciseImage: {
-    width: 65,
-    height: 65,
+    width: 120, // Ajuste o tamanho da imagem conforme necessário
+    height: 120,
     borderRadius: 10,
-    marginRight: 15,
+    marginLeft: 15,
+    right: -15,
+    transform: [{ rotate: "-5deg" }], // Inclina a imagem
+    overflow: "hidden", // Garante que a imagem seja cortada nas bordas
   },
   cardContent: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
+    flexDirection: "column",
   },
   exerciseTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#000",
   },
   exerciseDescription: {
-    fontSize: 12,
-    color: '#777',
+    fontSize: 20,
+    color: "#000",
     marginVertical: 5,
   },
   caloriesText: {
-    fontSize: 14,
-    color: '#6C63FF',
-    fontWeight: 'bold',
+    fontSize: 20,
+    color: "#4CAF50",
+    fontWeight: "bold",
   },
 });

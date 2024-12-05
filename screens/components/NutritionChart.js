@@ -4,23 +4,22 @@ import { View, Text, StyleSheet, Image } from "react-native";
 
 const NutritionChart = ({ data }) => {
   const chartConfig = {
-    backgroundColor: "#FF80AB", // Rosa suave
-    backgroundGradientFrom: "#FF4081", // Rosa mais intenso
-    backgroundGradientTo: "#F50057", // Vermelho
-    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`, // Cor das legendas
+    backgroundColor: "#FF80AB",
+    backgroundGradientFrom: "#FF4081",
+    backgroundGradientTo: "#F50057",
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
   };
 
-  // Alteração das cores do gráfico
   const updatedData = data.map((item) => ({
     ...item,
     color:
       item.name === "Calorias"
-        ? "#FF80AB" // Vermelho para Calorias
+        ? "#FF80AB"
         : item.name === "Gorduras"
-        ? "#FF4081" // Rosa para Gorduras
+        ? "#FF4081"
         : item.name === "Proteínas"
-        ? "#F50057" // Vermelho escuro para Proteínas
-        : "#FF80AB", // Rosa claro para Carboidratos
+        ? "#F50057"
+        : "#FF80AB",
   }));
 
   if (!data || data.length === 0) {
@@ -33,22 +32,23 @@ const NutritionChart = ({ data }) => {
 
   return (
     <View style={styles.card}>
-      {/* Gráfico à esquerda */}
       <View style={styles.chartContainer}>
         <Text style={styles.title}>Calorias {"\n"}consumidas</Text>
         <PieChart
           data={updatedData}
-          width={300} // Tamanho ajustado
-          height={180} // Tamanho ajustado
+          width={300}
+          height={150}
           chartConfig={chartConfig}
           accessor="population"
           backgroundColor="transparent"
-          hasLegend={false} // Desativa as legendas padrão do gráfico
+          hasLegend={false}
         />
-        {/* Legendas abaixo do gráfico */}
         <View style={styles.legendContainer}>
           {updatedData.map((item, index) => (
             <View key={index} style={styles.legendItem}>
+              <View
+                style={[styles.legendDot, { backgroundColor: item.color }]}
+              />
               <Text style={styles.legendText}>
                 {item.name}: {item.population}
               </Text>
@@ -57,10 +57,9 @@ const NutritionChart = ({ data }) => {
         </View>
       </View>
 
-      {/* Imagem cortada à direita */}
       <View style={styles.imageWrapper}>
         <Image
-          source={require("../../assets/fruta.png")} // Substitua pelo caminho correto da sua imagem
+          source={require("../../assets/fruta.png")}
           style={styles.image}
         />
       </View>
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#ff1", // Rosa claro
+    backgroundColor: "#000",
     borderRadius: 20,
     padding: 20,
     width: "100%",
@@ -88,40 +87,47 @@ const styles = StyleSheet.create({
   legendContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%", // Tamanho do gráfico ajustado
+    width: "100%",
     marginTop: 10,
   },
   legendItem: {
     flexDirection: "row",
     alignItems: "center",
-    fontSize: 6,
+    marginHorizontal: 5,
+  },
+  legendDot: {
+    width: 12, // Tamanho da bolinha
+    height: 12,
+    borderRadius: 6, // Deixa a bolinha redonda
+    marginRight: 8, // Espaço entre a bolinha e o texto
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
     textAlign: "left",
-    left: 0,
-    marginRight: 210,
+    alignSelf: "flex-start",
+    marginBottom: 10,
+    marginTop: 19,
   },
   legendText: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "bold",
-    color: "#fff", // Cor preta para contraste
+    color: "#fff",
   },
   imageWrapper: {
     position: "absolute",
     right: -70,
-    top: -40, // Move a imagem para fora da borda
+    top: -40,
     width: 200,
     height: 200,
-    overflow: "hidden", // Garante o corte da imagem
+    overflow: "hidden",
   },
   image: {
-    width: "100%", // Faz a imagem preencher o wrapper
+    width: "100%",
     height: "100%",
     resizeMode: "contain",
-    transform: [{ rotate: "-15deg" }], // Inclina a imagem
+    transform: [{ rotate: "-15deg" }],
   },
   loadingContainer: {
     flex: 1,

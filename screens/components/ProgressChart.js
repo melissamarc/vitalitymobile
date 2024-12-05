@@ -40,7 +40,7 @@ const ProgressBarCalories: React.FC<ProgressBarCaloriesProps> = ({
           Faltam{" "}
           {(
             dailyCalorieGoal - Math.min(caloriesBurned, dailyCalorieGoal)
-          ).toFixed(2)}{" "}
+          ).toFixed()}{" "}
           kcal para alcançar sua meta.
         </Text>
       )}
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     borderRadius: 15,
-    backgroundColor: "#019",
+    backgroundColor: "#046",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
