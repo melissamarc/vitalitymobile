@@ -55,7 +55,9 @@ const UserButton = ({ onPress }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={semfoto} // Sempre usa o avatar padrão
+        source={{
+          uri: userData?.photoURL || semfoto, // Exibe a foto do usuário ou a padrão
+        }}
         style={styles.profileImage}
       />
       <Text style={styles.username}>{userData?.username || "Usuário"}</Text>

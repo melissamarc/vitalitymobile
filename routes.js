@@ -20,6 +20,7 @@ import EditAccountScreen from "./screens/EditAccountScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import { WaterProvider } from "./screens/Watercontext";
 import GoalsScreen from "./screens/GoalsScreen";
+import HelpScreen from "./screens/HelpScreen";
 
 const Stack = createStackNavigator();
 
@@ -51,6 +52,7 @@ export default function AppRoutes() {
           <Stack.Screen name="CaloriasDev" component={CaloriasDev} />
           <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
           <Stack.Screen name="Metas" component={GoalsScreen} />
+          <Stack.Screen name="HelpScreen" component={HelpScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </WaterProvider>

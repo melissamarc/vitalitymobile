@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import { Pedometer } from "expo-sensors";
@@ -165,9 +159,7 @@ export default function Caminhada() {
           </View>
           <View style={styles.resultadoBox}>
             <Text style={styles.resultadoLabel}>Distância:</Text>
-            <Text style={styles.resultadoValue}>
-              {distancia.toFixed(2)} km
-            </Text>
+            <Text style={styles.resultadoValue}>{distancia.toFixed(2)} km</Text>
           </View>
           <View style={styles.resultadoBox}>
             <Text style={styles.resultadoLabel}>Calorias:</Text>
@@ -221,18 +213,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 10
+    padding: 10,
   },
   map: {
-    paddingBottom: 0,
     width: "100%",
-    height: "65%",  // Ajustei para 70% da altura da tela
-  
+    height: "65%", // Ajustei para 70% da altura da tela
   },
   statsContainer: {
+    top: -150,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 10,  // Adicionei padding para dar mais espaço
+    paddingHorizontal: 10, // Adicionei padding para dar mais espaço
   },
   statBox: {
     width: "22%",
@@ -241,7 +232,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    padding: 10,
   },
   statValue: {
     fontSize: 20,

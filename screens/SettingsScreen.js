@@ -1,92 +1,163 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, Image } from "react-native";
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Alert,
+  Image,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { getAuth } from "firebase/auth"; // Para autenticação
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore"; // Para acessar dados do usuário
+import Icon from "react-native-vector-icons/Feather"; // Importando o ícone de lápis
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
-  const [showHelp1, setShowHelp1] = useState(false);
-  const [showHelp2, setShowHelp2] = useState(false);
-  const [showHelp3, setShowHelp3] = useState(false);
+  const [userData, setUserData] = useState({
+    name: "",
+    username: "",
+    photoURL: "",
+    consecutiveDays: 0, // Contador de dias consecutivos
+  });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        const db = getFirestore();
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setUserData({
+            ...data,
+            consecutiveDays: calculateConsecutiveDays(data.loginDates || []),
+          });
+
+          // Adiciona a data do login atual
+          await updateDoc(userDocRef, {
+            loginDates: arrayUnion(new Date().toISOString()),
+          });
+        }
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  const calculateConsecutiveDays = (loginDates) => {
+    if (loginDates.length === 0) return 0;
+
+    // Ordena as datas
+    const sortedDates = loginDates
+      .map((date) => new Date(date))
+      .sort((a, b) => b - a);
+
+    let consecutiveDays = 1;
+    for (let i = 1; i < sortedDates.length; i++) {
+      const currentDate = sortedDates[i];
+      const previousDate = sortedDates[i - 1];
+      const diffTime = currentDate - previousDate;
+      const diffDays = diffTime / (1000 * 3600 * 24);
+
+      if (diffDays === 1) {
+        consecutiveDays++;
+      } else if (diffDays > 1) {
+        break;
+      }
+    }
+    return consecutiveDays;
+  };
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      'Excluir Conta',
-      'Tem certeza de que deseja excluir sua conta? Essa ação não pode ser desfeita.',
+      "Excluir Conta",
+      "Tem certeza de que deseja excluir sua conta? Essa ação não pode ser desfeita.",
       [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Excluir', style: 'destructive', onPress: () => console.log('Conta excluída') },
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: () => console.log("Conta excluída"),
+        },
       ]
     );
   };
 
-  const handleLogout = () => {
-    navigation.navigate('Home'); // Redireciona para a tela Home
-  };
-
-  const handleAddAccount = () => {
-    Alert.alert('Adicionar Conta', 'Funcionalidade de adicionar uma nova conta será implementada.');
-  };
-
-  const toggleHelp = (helpNumber) => {
-    if (helpNumber === 1) setShowHelp1(!showHelp1);
-    if (helpNumber === 2) setShowHelp2(!showHelp2);
-    if (helpNumber === 3) setShowHelp3(!showHelp3);
+  const handleChangeProfilePicture = () => {
+    Alert.alert(
+      "Alterar Foto de Perfil",
+      "Aqui você pode permitir que o usuário selecione uma nova foto."
+    );
+    // Você pode integrar com uma biblioteca de seleção de imagem aqui, como o `react-native-image-picker`
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Logo ou imagem, se necessário */}
-      <Image style={styles.imagemlogin} source={{ uri: 'https://via.placeholder.com/200' }} />
-      
-      {/* Título */}
-      <Text style={styles.titleText}>Configurações</Text>
-
-
-      {/* Botões para expandir as seções de ajuda */}
-      <TouchableOpacity onPress={() => toggleHelp(1)} style={styles.helpButton}>
-        <Text style={styles.buttonText}>{showHelp1 ? 'Fechar Ajuda 1' : 'Abrir Ajuda 1'}</Text>
-      </TouchableOpacity>
-      {showHelp1 && (
-        <View style={styles.helpContent}>
-          <Text style={styles.helpText}>
-            Aqui você pode encontrar mais informações sobre como utilizar o aplicativo e solucionar problemas comuns. Ajuda 1.
-          </Text>
-        </View>
-      )}
-
-      <TouchableOpacity onPress={() => toggleHelp(2)} style={styles.helpButton}>
-        <Text style={styles.buttonText}>{showHelp2 ? 'Fechar Ajuda 2' : 'Abrir Ajuda 2'}</Text>
-      </TouchableOpacity>
-      {showHelp2 && (
-        <View style={styles.helpContent}>
-          <Text style={styles.helpText}>
-            Ajuda 2: Mais informações sobre a funcionalidade X.
-          </Text>
-        </View>
-      )}
-
-      <TouchableOpacity onPress={() => toggleHelp(3)} style={styles.helpButton}>
-        <Text style={styles.buttonText}>{showHelp3 ? 'Fechar Ajuda 3' : 'Abrir Ajuda 3'}</Text>
-      </TouchableOpacity>
-      {showHelp3 && (
-        <View style={styles.helpContent}>
-          <Text style={styles.helpText}>
-            Ajuda 3: Informações sobre como solucionar problemas comuns de configuração.
-          </Text>
-        </View>
-      )}
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.addButton} onPress={handleAddAccount}>
-          <Text style={styles.buttonText}>Adicionar Conta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
-          <Text style={styles.buttonText}>Excluir Conta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.buttonText}>Sair</Text>
+      {/* Informações do Usuário */}
+      <View style={styles.profileContainer}>
+        <Image
+          source={{
+            uri:
+              userData.photoURL ||
+              "https://i.pinimg.com/736x/13/b4/08/13b408f0ad453542c0d8fa8e62602245.jpg",
+          }}
+          style={styles.userImage}
+        />
+        <TouchableOpacity
+          onPress={handleChangeProfilePicture}
+          style={styles.editIconContainer}
+        >
+          <Icon name="edit" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
+      <Text style={styles.nameText}>{userData.name}</Text>
+      <Text style={styles.usernameText}>@{userData.username}</Text>
+
+      {/* Botões */}
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => navigation.navigate("EditAccountScreen")}
+      >
+        <Text style={styles.buttonText}>Editar Conta</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.permissionButton}
+        onPress={() => navigation.navigate("HelpScreen")}
+      >
+        <Text style={styles.buttonText}>Ajuda</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => Alert.alert("Adicionar Conta")}
+      >
+        <Text style={styles.buttonText}>Adicionar Conta</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={handleDeleteAccount}
+      >
+        <Text style={styles.buttonText}>Excluir Conta</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <Text style={styles.buttonText}>Sair</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -94,76 +165,97 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff0',
-    alignItems: 'center',
-    justifyContent: 'flex-start', // Para garantir que o conteúdo seja centralizado, mas o título fique no topo
+    alignItems: "center",
     padding: 20,
+    marginTop: 120,
   },
-
-  titleText: {
-    fontSize: 34,
-    fontWeight: 'bold',
-    marginTop: 20, // Espaço do topo
-    marginBottom: 140, // Espaço entre o título e o próximo conteúdo
-    textAlign: 'center', // Centraliza o título
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  buttonContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+  userImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    marginBottom: 10,
+  },
+  editIconContainer: {
+    position: "absolute",
+    bottom: 10,
+    right: 20,
+    backgroundColor: "#7dcd9a",
+    padding: 6,
+    borderRadius: 50,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+  },
+  nameText: {
+    fontSize: 25,
+    marginTop: 25,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  usernameText: {
+    fontSize: 20,
+    color: "gray",
+    marginBottom: 140,
+    marginTop: 10,
+  },
+  consecutiveDaysContainer: {
+    marginVertical: 20,
+    padding: 10,
+    backgroundColor: "#7DCD9A",
     borderRadius: 10,
-    width: '100%',
-    marginTop: 20,
   },
-  addButton: {
-    backgroundColor: '#7DCD9A',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+  consecutiveDaysText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  editButton: {
+    backgroundColor: "#7DCD9A",
+    padding: 12,
     borderRadius: 10,
-    width: '100%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  permissionButton: {
+    backgroundColor: "#7DCD9A",
+    padding: 12,
+    borderRadius: 10,
+    width: "80%",
+    alignItems: "center",
     marginBottom: 10,
   },
   deleteButton: {
-    backgroundColor: '#ff6f61',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    backgroundColor: "#FD6F61",
+    padding: 12,
     borderRadius: 10,
-    width: '100%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  addButton: {
+    backgroundColor: "#7dcd9a",
+    padding: 12,
+    borderRadius: 10,
+    width: "80%",
+    alignItems: "center",
     marginBottom: 10,
   },
   logoutButton: {
-    backgroundColor: '#7DCD9A',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    backgroundColor: "#ff6f61",
+    padding: 12,
     borderRadius: 10,
-    width: '100%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  helpButton: {
-    backgroundColor: '#a9a9a9',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: '90%',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  helpContent: {
-    backgroundColor: '#f1f1f1',
-    padding: 20,
-    borderRadius: 10,
-    width: '100%',
-  },
-  helpText: {
-    fontSize: 14,
-    color: '#555',
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 18,
   },
 });
-
-

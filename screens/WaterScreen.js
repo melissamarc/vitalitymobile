@@ -45,19 +45,12 @@ export default function WaterScreen() {
       <View style={styles.WaterBox}>
         {/* Textos alinhados à esquerda */}
         <View style={styles.texts}>
-          <Text style={styles.topTitle}>Controle de Água</Text>
+          <Text style={styles.topTitle}>Controle de {"\n"}Água</Text>
           <Text style={styles.topText}>
-          Acompanhe seu consumo diário de água, mantenha-se hidratado e alcance a meta de 2 litros (2000ml) para cuidar da sua saúde!          </Text>
+            Acompanhe seu consumo diário de água, mantenha-se hidratado e
+            alcance a meta de 2 litros (2000ml) para cuidar da sua saúde!{" "}
+          </Text>
         </View>
-
-        {/* Imagem alinhada à direita */}
-        <Image
-          source={{
-            uri: "agua.png", // Substitua pela URL da imagem
-          }}
-          style={styles.waterImage}
-        />
-        
       </View>
 
       <View style={styles.TitleContainer}>
@@ -113,7 +106,7 @@ const styles = StyleSheet.create({
     height: "17%",
     borderRadius: 10,
     marginVertical: 15,
-    marginTop: 30,
+    marginTop: 50,
     width: "100%",
     alignItems: "center",
   },
@@ -124,7 +117,7 @@ const styles = StyleSheet.create({
     paddingRight: 10, // Espaçamento entre o texto e a imagem
   },
   topTitle: {
-    fontSize: 18,
+    fontSize: 26,
     fontWeight: "bold",
     color: "white",
     marginBottom: 5,
@@ -132,10 +125,12 @@ const styles = StyleSheet.create({
   topText: {
     fontSize: 14,
     color: "white",
+    width: 250,
   },
   waterImage: {
-    width: 60, // Largura da imagem
-    height: 60, // Altura da imagem
+    width: 100, // Largura da imagem
+    height: 100,
+
     borderRadius: 30, // Torna a imagem circular
   },
   dadosText: {
