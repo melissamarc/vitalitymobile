@@ -80,12 +80,6 @@ export default function DashboardHomeScreen() {
           >
             <Ionicons name="settings-outline" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ProfileScreen")}
-            style={styles.iconButton}
-          >
-            <Ionicons name="person-outline" size={24} color="black" />
-          </TouchableOpacity>
         </View>
       </View>
       <NutritionChart data={chartData} />

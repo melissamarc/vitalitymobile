@@ -11,7 +11,7 @@ const ProgressBarCalories: React.FC<ProgressBarCaloriesProps> = ({
   dailyCalorieGoal,
   stepsTaken,
 }) => {
-  const CALORIES_PER_STEP = 0.04; // Quantas calorias são queimadas por passo
+  const CALORIES_PER_STEP = 0.02; // Quantas calorias são queimadas por passo
   const [caloriesBurned, setCaloriesBurned] = useState(0);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const ProgressBarCalories: React.FC<ProgressBarCaloriesProps> = ({
         style={styles.progress}
       />
       <Text style={styles.details}>
-        {Math.min(caloriesBurned, dailyCalorieGoal).toFixed(2)} /{" "}
+        {Math.min(caloriesBurned, dailyCalorieGoal).toFixed()} /{" "}
         {dailyCalorieGoal} kcal
       </Text>
       {caloriesBurned >= dailyCalorieGoal ? (

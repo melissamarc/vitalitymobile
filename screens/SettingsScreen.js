@@ -113,12 +113,6 @@ export default function SettingsScreen() {
           }}
           style={styles.userImage}
         />
-        <TouchableOpacity
-          onPress={handleChangeProfilePicture}
-          style={styles.editIconContainer}
-        >
-          <Icon name="edit" size={24} color="#fff" />
-        </TouchableOpacity>
       </View>
       <Text style={styles.nameText}>{userData.name}</Text>
       <Text style={styles.usernameText}>@{userData.username}</Text>
@@ -179,18 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginBottom: 10,
   },
-  editIconContainer: {
-    position: "absolute",
-    bottom: 10,
-    right: 20,
-    backgroundColor: "#7dcd9a",
-    padding: 6,
-    borderRadius: 50,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.5,
-  },
+
   nameText: {
     fontSize: 25,
     marginTop: 25,

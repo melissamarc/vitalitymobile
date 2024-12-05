@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import MapView, { Polyline } from "react-native-maps";
 import * as Location from "expo-location";
 import { Pedometer } from "expo-sensors";
+import Icon from "react-native-vector-icons/FontAwesome5"; // Usando FontAwesome5
 
 export default function Caminhada() {
   const [location, setLocation] = useState(null);
@@ -107,17 +108,23 @@ export default function Caminhada() {
         </MapView>
       </TouchableOpacity>
 
+      {/* Cabeçalho sobreposto ao mapa */}
+      <View style={styles.headerContainer}>
+        <Icon name="running" size={30} color="#fff" solid style={styles.icon} />
+        <Text style={styles.headerText}>Caminhada</Text>
+      </View>
+
       <View style={styles.statsContainer}>
         <View style={styles.statBox}>
           <Text style={styles.statValue}>{steps}</Text>
           <Text style={styles.statLabel}>Passos</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statValue}>{distancia.toFixed(2)} km</Text>
+          <Text style={styles.statValue}>{distancia.toFixed(1)} km</Text>
           <Text style={styles.statLabel}>Distância</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statValue}>{calorias.toFixed(2)} kcal</Text>
+          <Text style={styles.statValue}>{calorias.toFixed()} kcal</Text>
           <Text style={styles.statLabel}>Calorias</Text>
         </View>
         <View style={styles.statBox}>
@@ -144,7 +151,7 @@ export default function Caminhada() {
           </TouchableOpacity>
         )}
         {!ativo && tempo > 0 && (
-          <TouchableOpacity style={styles.button} onPress={finalizarExercicio}>
+          <TouchableOpacity style={styles.button2} onPress={finalizarExercicio}>
             <Text style={styles.buttonText}>Finalizar</Text>
           </TouchableOpacity>
         )}
@@ -152,14 +159,14 @@ export default function Caminhada() {
 
       {exercicioFinalizado && (
         <View style={styles.resultadosContainer}>
-          <Text style={styles.resultadosTitle}>Resultados</Text>
+          <Text style={styles.resultadosTitle}>Resultados ✨</Text>
           <View style={styles.resultadoBox}>
             <Text style={styles.resultadoLabel}>Passos:</Text>
             <Text style={styles.resultadoValue}>{steps}</Text>
           </View>
           <View style={styles.resultadoBox}>
             <Text style={styles.resultadoLabel}>Distância:</Text>
-            <Text style={styles.resultadoValue}>{distancia.toFixed(2)} km</Text>
+            <Text style={styles.resultadoValue}>{distancia.toFixed(1)} km</Text>
           </View>
           <View style={styles.resultadoBox}>
             <Text style={styles.resultadoLabel}>Calorias:</Text>
@@ -213,11 +220,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 10,
   },
   map: {
     width: "100%",
-    height: "65%", // Ajustei para 70% da altura da tela
+    height: "75%", // Ajustei para 70% da altura da tela
+  },
+  headerContainer: {
+    position: "absolute",
+    top: 60,
+    left: 20,
+    right: 20,
+    height: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    zIndex: 1,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000",
+    marginLeft: 10,
+  },
+  icon: {
+    backgroundColor: "#A7D8A1", // Verde bem claro para o fundo do ícone
+    padding: 2,
+    borderRadius: 25,
   },
   statsContainer: {
     top: -150,
@@ -226,7 +261,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, // Adicionei padding para dar mais espaço
   },
   statBox: {
-    width: "22%",
+    width: "24%",
     height: 100,
     backgroundColor: "#f0f0f0",
     justifyContent: "center",
@@ -244,16 +279,27 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 10,
+    marginHorizontal: 10,
+    gap: 5,
   },
   button: {
+    top: -135,
     backgroundColor: "#0EAB6E",
     padding: 15,
+    width: 185,
+    borderRadius: 10,
+  },
+  button2: {
+    top: -135,
+    backgroundColor: "#FF0000",
+    padding: 15,
+    width: 185,
     borderRadius: 10,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
   },
   closeButton: {
     position: "absolute",
@@ -268,11 +314,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   resultadosContainer: {
-    marginTop: 10,
     paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginHorizontal: 10,
+    top: -100,
+    backgroundColor: "#eee",
+    borderRadius: 10,
   },
   resultadosTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
   },
