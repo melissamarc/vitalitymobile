@@ -319,7 +319,7 @@ export default function RecipeScreen() {
       {/* Nova View com título, texto e imagem */}
       <View style={styles.infoBox}>
         <View style={styles.texts}>
-          <Text style={styles.infoTitle}>Receita do Dia</Text>
+          <Text style={styles.infoTitle}>Receitas</Text>
           <Text style={styles.infoText}>
             Descubra uma receita saudável e deliciosa para começar o seu dia com
             energia.
@@ -402,8 +402,8 @@ const styles = StyleSheet.create({
   infoBox: {
     backgroundColor: "#4CAF50", // Cor de fundo azul
     padding: 15,
-    height: "17%",
-    borderRadius: 10,
+    height: "22%",
+    borderRadius: 18,
     marginVertical: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -416,13 +416,13 @@ const styles = StyleSheet.create({
   },
 
   infoTitle: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#fff",
     flex: 1,
   },
   infoText: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#fff",
     flex: 2,
   },
