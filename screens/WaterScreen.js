@@ -3,16 +3,16 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   StyleSheet,
   Animated,
+  Image,
 } from "react-native";
-import { useWaterContext } from "./Watercontext"; // Importando o contexto
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useWaterContext } from "./Watercontext";
 
 export default function WaterScreen() {
-  const { cupsConsumed, setCupsConsumed } = useWaterContext(); // Acessando o estado e a função de atualização
+  const { cupsConsumed, setCupsConsumed } = useWaterContext();
 
-  // Referência para a animação da água
   const waterAnim = useRef(new Animated.Value(0)).current;
 
   const handleAddCup = () => {
@@ -25,50 +25,58 @@ export default function WaterScreen() {
     }
   };
 
-  // Definindo a meta diária de 2L (2000ml)
-  const dailyGoal = 2000; // Meta diária em ml
-  const waterLevel = cupsConsumed * 200; // Cada copo tem 200ml
-  const waterPercentage = (waterLevel / dailyGoal) * 100; // Porcentagem com base na meta diária
-  const waterInMl = cupsConsumed * 200; // Quantidade de água consumida
+  const dailyGoal = 2000;
+  const waterLevel = cupsConsumed * 200;
+  const waterPercentage = Math.min((waterLevel / dailyGoal) * 100, 100);
+  const waterInMl = cupsConsumed * 200;
 
-  // Animando a altura da água dentro da gota
+  const waterHeight = Math.min(waterLevel, dailyGoal);
+
   useEffect(() => {
     Animated.timing(waterAnim, {
-      toValue: (waterLevel / dailyGoal) * 300, // Ajustando a altura com base na quantidade de água
+      toValue: (waterHeight / dailyGoal) * 300,
       duration: 500,
       useNativeDriver: false,
     }).start();
-  }, [cupsConsumed]); // Atualiza a animação sempre que o número de copos mudar
+  }, [cupsConsumed]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Controle de Água</Text>
-      <Text style={styles.paragraph}>
-        Acompanhe a quantidade de água que você consumiu ao longo do dia e
-        mantenha-se hidratado. A meta diária é de 2 litros (2000ml). Beba mais
-        água e cuide da sua saúde!
-      </Text>
+      <View style={styles.WaterBox}>
+        {/* Textos alinhados à esquerda */}
+        <View style={styles.texts}>
+          <Text style={styles.topTitle}>Controle de Água</Text>
+          <Text style={styles.topText}>
+          Acompanhe seu consumo diário de água, mantenha-se hidratado e alcance a meta de 2 litros (2000ml) para cuidar da sua saúde!          </Text>
+        </View>
 
-      <Text style={styles.infoText}>Meta diária: 2000ml</Text>
-      <Text style={styles.infoText}>Água consumida: {waterInMl}ml</Text>
-      <Text style={styles.infoText}>
-        Porcentagem da meta alcançada: {Math.round(waterPercentage)}%
-      </Text>
-
-      <View style={styles.dropContainer}>
-        {/* Gota estática */}
+        {/* Imagem alinhada à direita */}
         <Image
-          source={require("../assets/waterdrop.png")} // Colocando o ícone da gota como fundo
-          style={styles.dropIcon}
+          source={{
+            uri: "agua.png", // Substitua pela URL da imagem
+          }}
+          style={styles.waterImage}
         />
+        
+      </View>
 
-        {/* Animação da água subindo e descendo dentro da gota */}
-        <Animated.View
-          style={[
-            styles.water,
-            { height: waterAnim }, // Animação da altura da água dentro da gota
-          ]}
-        />
+      <View style={styles.TitleContainer}>
+        <Text style={styles.titleText}>Meta: 2000ml</Text>
+      </View>
+
+      <View style={styles.progressContainer}>
+        <View style={styles.progressBackground}>
+          <Animated.View
+            style={[styles.waterProgress, { height: waterAnim }]}
+          />
+        </View>
+      </View>
+
+      <View style={styles.dadosContainer}>
+        <Text style={styles.dadosText}>Água consumida: {waterInMl}ml</Text>
+        <Text style={styles.dadosText}>
+          Porcentagem alcançada: {Math.round(waterPercentage)}%
+        </Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -76,20 +84,14 @@ export default function WaterScreen() {
           style={[styles.button, { backgroundColor: "#80DEEA" }]}
           onPress={handleAddCup}
         >
-          <Image
-            source={require("../assets/watermais.png")}
-            style={[styles.icon, { tintColor: "#FFF" }]}
-          />
+          <Icon name="water-plus" size={32} color="#FFF" />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.button, { backgroundColor: "#80DEEA" }]}
           onPress={handleRemoveCup}
         >
-          <Image
-            source={require("../assets/watermenos.png")}
-            style={[styles.icon, { tintColor: "#FFF" }]}
-          />
+          <Icon name="water-minus" size={32} color="#FFF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -99,65 +101,100 @@ export default function WaterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
     backgroundColor: "#E0F7FA",
   },
-  title: {
+  WaterBox: {
+    flexDirection: "row",
+    backgroundColor: "#00BCD4",
+    padding: 15,
+    height: "17%",
+    borderRadius: 10,
+    marginVertical: 15,
+    marginTop: 30,
+    width: "100%",
+    alignItems: "center",
+  },
+  texts: {
+    flex: 1,
+    alignItems: "flex-start", // Alinha o texto à esquerda
+    justifyContent: "center",
+    paddingRight: 10, // Espaçamento entre o texto e a imagem
+  },
+  topTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+    marginBottom: 5,
+  },
+  topText: {
+    fontSize: 14,
+    color: "white",
+  },
+  waterImage: {
+    width: 60, // Largura da imagem
+    height: 60, // Altura da imagem
+    borderRadius: 30, // Torna a imagem circular
+  },
+  dadosText: {
+    fontSize: 16,
+    color: "#00BCD9",
+    marginBottom: 10,
+    marginHorizontal: 5,
+    textAlign: "center",
+    width: "100%",
+  },
+  TitleContainer: {
+    marginBottom: 24,
+    width: "100%",
+    alignItems: "center",
+  },
+  titleText: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
-    color: "#00796B",
+    color: "#00BCD9",
   },
-  paragraph: {
-    textAlign: "center",
-    fontSize: 16,
-    marginBottom: 20,
-    color: "#00796B",
-  },
-  infoText: {
-    fontSize: 16,
-    color: "#00796B",
-    marginBottom: 10,
-  },
-  dropContainer: {
-    width: 200,
+  progressContainer: {
+    width: 150,
     height: 300,
-    justifyContent: "flex-end", // Garante que a água suba de baixo para cima
+    justifyContent: "flex-end",
     alignItems: "center",
-    position: "relative",
+    marginBottom: 20,
   },
-  dropIcon: {
-    width: 200,
-    height: 300,
-    borderRadius: 50, // Tornando a gota arredondada
-    opacity: 0.4, // Leve transparência para a gota
-    position: "absolute",
-    bottom: 0, // Fixando a gota no fundo
-  },
-  water: {
+  progressBackground: {
     width: "100%",
-    backgroundColor: "#80DEEA", // Cor azul claro para a água
+    height: "100%",
+    backgroundColor: "#B2EBF2",
+    borderRadius: 50,
+    overflow: "hidden",
+    justifyContent: "flex-end",
+  },
+  waterProgress: {
+    width: "100%",
+    backgroundColor: "#00BCD4",
     position: "absolute",
-    bottom: 0, // Mantendo a água no fundo da gota e subindo a partir daí
-    borderRadius: 50, // Mantém as bordas arredondadas
+    bottom: 0,
+    borderRadius: 50,
+  },
+  dadosContainer: {
+    marginTop: 20,
+    alignItems: "center",
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-between", // Alinhando os botões lado a lado
-    width: "60%", // Controlando a largura dos botões
+    justifyContent: "space-between",
+    width: "80%",
+    marginTop: 20,
   },
   button: {
-    flexDirection: "row",
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#80DEEA",
+    justifyContent: "center",
     alignItems: "center",
-    padding: 10,
-    margin: 5,
-    borderRadius: 5,
-    backgroundColor: "#80DEEA", // Cor azul claro
-  },
-  icon: {
-    width: 50,
-    height: 50,
+    marginHorizontal: 10,
   },
 });
