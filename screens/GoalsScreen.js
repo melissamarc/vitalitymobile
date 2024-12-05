@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  ScrollView,
+  Image,
 } from "react-native";
 import { firebase } from "../firebaseconfig";
 
@@ -45,58 +47,146 @@ export default function GoalsScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerText}>Defina suas metas</Text>
-      <TextInput
-        placeholder="Meta de passos diários"
-        keyboardType="numeric"
-        value={stepGoal}
-        onChangeText={setStepGoal}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Meta de calorias diárias"
-        keyboardType="numeric"
-        value={calorieGoal}
-        onChangeText={setCalorieGoal}
-        style={styles.input}
-      />
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.card}>
+        <View style={styles.texto}>
+          <Text style={styles.title}>Comece definindo {"\n"}suas metas!</Text>
+
+          <Text style={styles.cardDescription}>
+            Planeje suas metas e objetivos e obtenha um melhor desempenho.
+          </Text>
+        </View>
+
+        <Image
+          source={require("../assets/estrelas.png")}
+          style={styles.estrelasIcon}
+        />
+      </View>
+
+      <View style={styles.stepsContainer}>
+        <View style={styles.step}>
+          <View style={styles.stepDetails}>
+            <Text style={styles.stepTitle}>Passos Diários </Text>
+            <TextInput
+              placeholder="Meta de passos diários"
+              keyboardType="numeric"
+              value={stepGoal}
+              onChangeText={setStepGoal}
+              style={styles.input}
+            />
+          </View>
+        </View>
+        <View style={styles.step}>
+          <View style={styles.stepDetails}>
+            <Text style={styles.stepTitle}>Gasto de Calorias Diário</Text>
+            <TextInput
+              placeholder="Meta de calorias diárias"
+              keyboardType="numeric"
+              value={calorieGoal}
+              onChangeText={setCalorieGoal}
+              style={styles.input}
+            />
+          </View>
+        </View>
+      </View>
+
       <TouchableOpacity style={styles.saveButton} onPress={saveGoals}>
         <Text style={styles.saveButtonText}>Salvar Metas</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     padding: 20,
+    marginTop: 60,
   },
-  headerText: {
-    fontSize: 24,
+  title: {
+    fontSize: 30,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "#fff",
+    width: 170,
+  },
+  estrelasIcon: {
+    width: 85,
+    height: 85,
+    top: -15,
+    left: -15,
+  },
+  card: {
+    backgroundColor: "#7dcd9a",
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+    flexDirection: "row",
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2D9CDB",
+    marginBottom: 10,
+  },
+  cardDescription: {
+    fontSize: 16,
+    color: "#fff",
+    marginBottom: 10,
+    width: 260,
+  },
+  avatarContainer: {
+    flexDirection: "row",
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 5,
+  },
+  stepsContainer: {
+    marginBottom: 20,
+  },
+  step: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  stepIcon: {
+    width: 50,
+    height: 50,
+    marginRight: 10,
+  },
+  stepDetails: {
+    flex: 1,
+  },
+  stepTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
   },
   input: {
-    width: "100%",
-    padding: 15,
+    backgroundColor: "#FFF",
+    padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: "#DDD",
-    borderRadius: 10,
-    marginBottom: 15,
   },
   saveButton: {
-    backgroundColor: "#7DCD9A",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    backgroundColor: "#7dcd9a",
+    paddingVertical: 15,
     borderRadius: 10,
     alignItems: "center",
+    marginTop: 290,
   },
   saveButtonText: {
-    color: "white",
+    color: "#FFF",
+    fontSize: 16,
     fontWeight: "bold",
   },
 });

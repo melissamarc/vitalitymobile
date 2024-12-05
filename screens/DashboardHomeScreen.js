@@ -16,10 +16,13 @@ import UserButton from "./components/UserButton";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import StepSummary from "./components/StepSumary";
+import ProgressBarCalories from "./components/ProgressChart";
 
 export default function DashboardHomeScreen() {
   const navigation = useNavigation();
 
+  const [stepsTaken, setStepsTaken] = useState(2000); // Exemplo: passos dados
+  const dailyCalorieGoal = 200; // Meta de calorias diárias definida pelo usuário
   const [totalWater, setTotalWater] = useState(0);
 
   useEffect(() => {
@@ -85,12 +88,16 @@ export default function DashboardHomeScreen() {
           </TouchableOpacity>
         </View>
       </View>
-
       <NutritionChart data={chartData} />
       <View style={styles.content}>
         <WaterCounter />
         <StepSummary />
       </View>
+
+      <ProgressBarCalories
+        dailyCalorieGoal={dailyCalorieGoal}
+        stepsTaken={stepsTaken}
+      />
     </View>
   );
 }
@@ -103,6 +110,7 @@ const styles = StyleSheet.create({
 
   content: {
     flexDirection: "row",
+    gap: 7,
   },
 
   header: {

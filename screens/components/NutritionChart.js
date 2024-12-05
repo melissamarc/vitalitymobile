@@ -35,6 +35,7 @@ const NutritionChart = ({ data }) => {
     <View style={styles.card}>
       {/* Gráfico à esquerda */}
       <View style={styles.chartContainer}>
+        <Text style={styles.title}>Calorias {"\n"}consumidas</Text>
         <PieChart
           data={updatedData}
           width={300} // Tamanho ajustado
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#ff1744", // Rosa claro
+    backgroundColor: "#ff1", // Rosa claro
     borderRadius: 20,
     padding: 20,
     width: "100%",
@@ -93,6 +94,15 @@ const styles = StyleSheet.create({
   legendItem: {
     flexDirection: "row",
     alignItems: "center",
+    fontSize: 6,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "left",
+    left: 0,
+    marginRight: 210,
   },
   legendText: {
     fontSize: 18,
